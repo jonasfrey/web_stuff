@@ -1,0 +1,1823 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Math</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name='viewport' 
+     content='width=device-width, initial-scale=1.0, maximum-scale=1.0, 
+     user-scalable=0' >
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />
+        <script type="module" src="https://cdn.space.unibe.ch/InputTypeTextButNumber.js" ></script>
+        <script type="module" src="https://cdn.space.unibe.ch/JsonToCss.js" ></script>
+
+<style>
+       
+
+*{
+  margin:0;
+  padding:0;
+}
+*{
+  background:hsla(0, 0%, 30%, 1);
+  color:#eee;
+
+}
+*.active{
+  background:hsla(0, 0%, 44%, 1);
+}
+button:hover, input:hover{
+  box-shadow: rgba(0,0,0,0.6);
+}
+body{
+  background:#333;
+  color:#eee;
+  font-family:sans-serif;
+  font-size:1.2rem;
+}
+*{
+  font-size: 1.2rem;
+}
+
+#app{
+  position:fixed;
+  top:0;
+  left:0;
+  z-index:1;
+  width:100vw;
+  min-height: -webkit-fill-available;
+  min-height: fill-available;
+  height: fill-available;
+  height: -webkit-fill-available;
+}
+.container{
+  width:100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+}
+.transparent_function_input{
+  display: flex;
+  flex-direction:column;
+  flex-grow: 1;
+  flex-basis: 85%;
+}
+.transparent{
+  flex-grow:1;
+  background:rgba(255,111,0,0.8);
+  background:#333;
+  position: relative;
+}
+.function_input{
+  background:rgba(255,255,0,0.8);
+  background:#333;
+}
+.f_str{
+  padding:1rem;
+}
+.mode_inputs{
+  flex-grow:1;
+ 
+  background:rgba(0,255,0, 0.8);
+  background:#333;
+}
+.slider{
+  -webkit-appearance: slider-vertical;
+  height:100%;
+  width:100%;
+}
+.f_inputs{
+  display: flex;
+  flex-direction: row;
+}
+.f_buttons{
+  display: flex;
+  flex-direction: column;
+}
+
+.f_inputs input{
+  border:none;
+  box-shadow: none;
+  flex:1 1 auto;
+
+}
+input, button, textarea, select{
+  /* min-width: 0; and width:0; very very very important for flexbox to work with input and button */
+  min-width: 0;
+  width:0;
+  box-sizing: border-box;
+}
+button{
+  width:100%;
+}
+
+.inputs{
+  width:100%;
+  z-index:2;
+  position:fixed;
+  top:0;
+  left:0;
+}
+label{
+  display:block;
+}
+canvas{
+  position:absolute;
+  z-index:0;
+}
+.modes_selection, .help{
+    position: absolute;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: rgba(0,0,0,0.6);
+}
+.help{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.help img{
+    width:90%;
+}
+.canvas_settings{
+  position: absolute;
+  z-index: 1; 
+  top:0;
+  left:0;
+}
+
+.d-flex{
+  display:flex;
+}
+.flex-wrap{
+  flex-wrap: wrap;
+}
+.flex-column{
+  flex-direction: column;
+}
+.flex-row{
+  flex-direction: row;
+}
+.flex-col-1{ flex-basis: calc(100%/12*1);}
+.flex-col-2{ flex-basis: calc(100%/12*2);}
+.flex-col-3{ flex-basis: calc(100%/12*3);}
+.flex-col-4{ flex-basis: calc(100%/12*4);}
+.flex-col-5{ flex-basis: calc(100%/12*5);}
+.flex-col-6{ flex-basis: calc(100%/12*6);}
+.flex-col-7{ flex-basis: calc(100%/12*7);}
+.flex-col-8{ flex-basis: calc(100%/12*8);}
+.flex-col-9{ flex-basis: calc(100%/12*9);}
+.flex-col-10{ flex-basis: calc(100%/12*10);}
+.flex-col-11{ flex-basis: calc(100%/12*11);}
+.flex-col-12{ flex-basis: calc(100%/12*12);}
+input, button{
+  padding:1rem;
+}
+input[type="checkbox"], input[type="radio"]{
+  width:50px;
+  height:50px;
+}
+.p1_color, .p2_color{
+  width:100%;
+  height: 100%;
+  border:2px solid #eee;
+}
+.coordinate{
+width:25%;
+  display:inline-block;
+}
+.colors {
+    position: absolute;
+    z-index: 1;
+    display: flex;
+}
+
+[class^="color_"] {
+    width: 3rem;
+    height: 3rem;
+    border: 1px solid white;
+    flex: 33%;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+        </style>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+        <div id="app"></div>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+        <script id="main_script" type="module">
+
+        import {JsonToHCJ} from 'https://cdn.space.unibe.ch/JsonToHCJ.js';
+
+        import {JsonToCss } from "https://cdn.space.unibe.ch/JsonToCss.js";
+
+            window.css_object = {
+                    vars: { "red" : "rgb(255,0,0)"}, 
+            selectors: {
+              body : {
+                ".console":{
+                  "max-height":"100px",
+                  "overflow":"hidden",
+                  "scroll-behavior":"bo",
+                  "overflow-y":"scroll",
+                  "font-family":"monospace",
+                  "p": {
+                    "color":"rgb(51,255,0)",
+                  }
+                },
+                  button: {
+                      "&:hover": {
+                        "cursor": "pointer", 
+                        "box-shadow": "0px 0px 4px 1px #000000",
+                        "z-index": "1",
+                        "background": "hsla(0, 0%, 44%, 1)"
+
+                      }
+                  },
+                  input: {
+                      "&:hover":{
+                        "cursor": "pointer", 
+                        "box-shadow": "0px 0px 4px 1px #000000",
+                        "z-index": "1",
+                        "background": "hsla(0, 0%, 44%, 1)"
+                      }
+                  },
+                "h1": {
+                  color: "red"
+                }, 
+                h2: {
+                  color: ":vars.red"
+                },
+                h3: {
+                  color: ":rules.redbig",
+                  "&:hover": {
+                    color: ":vars.red"
+                  }
+                }
+              }
+            }, 
+            rules: {
+              redbig: {
+                "font-size":":(1+1) +'rem'", 
+                "color": ":vars.red"
+              }
+            }
+                };
+
+                window.jtc = new JsonToCss(css_object);
+            
+import {JsonToHtml} from "https://cdn.space.unibe.ch/JsonToHtml.js";
+
+
+var jth = new JsonToHtml();
+document.getElementById("app").append(
+jth.parse(
+  {
+    "class": "container",
+    "c":[
+
+      {
+        "class": "transparent_function_input", 
+        c:[
+          {
+            "class": "transparent",
+            c: [
+                {
+                  "t":"canvas", 
+                  "id": "canvas",
+                  "class": "canvas",
+                  "v-on:mousemove": "mousemove_canvas", 
+                  "v-on:touchmove": "mousemove_canvas", 
+                  "v-on:mousedown": "mousedown_canvas", 
+                  "v-on:touchstart": "mousedown_canvas", 
+                  "v-on:dblclick": "dblclick_canvas", 
+                  "v-on:mouseup": "mouseup_canvas", 
+                  "v-on:touchend": "mouseup_canvas", 
+                  "v-on:wheel": "wheel_canvas", 
+                  "v-on:click": "click_canvas"
+                },
+                {
+                    "v-if": "help",
+                    "class": "help",
+                    "c": [
+                        {
+                            "t": "img", 
+                            ":src": "(is_dev_env()) ? './help.png' : 'math/help.png'"
+                        }
+                    ]
+                },
+                {
+                  "class": "modes_selection", 
+                  "v-if": "modes_selection",
+                  "c": [
+                    {
+                      "v-for": "obj in modes",
+                      "t": "button", 
+                      
+                      "v-html": "obj.name", 
+                      ":class": "(mode == obj) ? 'active' : ''", 
+                      "v-on:click": "mode = obj; modes_selection = false"
+                  
+                    }
+                  ]
+                },
+                {
+                  "class": "canvas_settings", 
+                  
+                  "c": [
+                    
+                    {
+                      "t": "button", 
+                      ":class": "(canvas_settings.display) ? 'active' : ''", 
+                      "v-on:click": "canvas_settings.display = !canvas_settings.display",
+                      "c": [
+                        {
+                          "t": "i", 
+                          "class": "fas fa-cog"
+                        }
+                      ]
+                    }, 
+                    
+                    { 
+                      "t": "button",
+                      ":class": "(modes_selection) ? 'active' : ''", 
+                      "v-on:click": "modes_selection = !modes_selection",
+                      "c": [
+                        {
+                           
+                          "style": "font-weight: bold;",
+                          "c": "f(x)"
+                        }
+                      ]
+                    },
+                    { 
+                      "t": "div",
+                      "v-if": "display_console",
+                      "class": "console",
+                      "c": [
+                        {
+                          "c": "CONSOLE:"
+                        },
+                        {
+                          "t": "p",
+                          "v-for": "arr in console_messages",
+                          "v-html": "arr.join(' ')"
+                        }
+                      ]
+                    },
+                    {
+                      "v-if": "canvas_settings.display",
+ 
+                      "c": [
+                        {
+                          "t": "label", 
+                          "v-html": "'bg_transparency: ' + canvas_settings.bg_transparency.value"
+                        }, 
+                        {
+                          "t": "input", 
+                          "type": "range",
+                          "style": "width:10rem", 
+                          ":min":"canvas_settings.bg_transparency.min", 
+                          ":max": "canvas_settings.bg_transparency.max", 
+                          ":step": "canvas_settings.bg_transparency.step", 
+                          "v-model": "canvas_settings.bg_transparency.value",
+                          "v-on:dblclick": "canvas_settings.bg_transparency.value = canvas_settings.bg_transparency.reset_value",
+                        },
+                        {
+                          "t": "label", 
+                          "v-html": "'global_alpha: ' + canvas_settings.global_alpha.value"
+                        }, 
+                        {
+                          "t": "input", 
+                          "type": "range",
+                          "style": "width:10rem", 
+                          ":min":"canvas_settings.global_alpha.min", 
+                          ":max": "canvas_settings.global_alpha.max", 
+                          ":step": "canvas_settings.global_alpha.step", 
+                          "v-model": "canvas_settings.global_alpha.value",
+                          "v-on:dblclick": "canvas_settings.global_alpha.value = canvas_settings.global_alpha.reset_value"
+                        },
+                        {
+                          "t": "label", 
+                          "v-html": "'grid_size: ' + canvas_settings.grid_size.value"
+                        }, 
+                        {
+                          "t": "input", 
+                          "type": "range",
+                          "style": "width:10rem", 
+                          ":min":"canvas_settings.grid_size.min", 
+                          ":max": "canvas_settings.grid_size.max", 
+                          ":step": "canvas_settings.grid_size.step", 
+                          "v-model": "canvas_settings.grid_size.value",
+                          "v-on:dblclick": "canvas_settings.grid_size.value = canvas_settings.grid_size.reset_value"
+                        },
+                        {
+                          "t": "label", 
+                          "v-html": "'grid_step: ' + canvas_settings.grid_step.value"
+                        }, 
+                        {
+                          "t": "input", 
+                          "type": "range",
+                          "style": "width:10rem", 
+                          ":min":"canvas_settings.grid_step.min", 
+                          ":max": "canvas_settings.grid_step.max", 
+                          ":step": "canvas_settings.grid_step.step", 
+                          "v-model": "canvas_settings.grid_step.value",
+                          "v-on:dblclick": "canvas_settings.grid_step.value = canvas_settings.grid_step.reset_value"
+                        },
+                        {
+                          "t": "label", 
+                          "v-html": "'grid_length: ' + canvas_settings.grid_length.value"
+                        }, 
+                        {
+                          "t": "input", 
+                          "type": "range",
+                          "style": "width:10rem", 
+                          ":min":"canvas_settings.grid_length.min", 
+                          ":max": "canvas_settings.grid_length.max", 
+                          ":step": "canvas_settings.grid_length.step", 
+                          "v-model": "canvas_settings.grid_length.value",
+                          "v-on:dblclick": "canvas_settings.grid_length.value = canvas_settings.grid_length.reset_value"
+                        },
+                        {
+                          "t": "label", 
+                          "v-html": "'display_console'"
+                        }, 
+                        {
+                          "t": "input", 
+                          "type": "button",
+                          "style": "width:10rem", 
+                          "v-on:click": "display_console = !display_console",
+                          ":class": "(display_console) ? 'active': ''",
+                          "value": "display console",
+                          "v-model": "display_console",
+                        }
+                      ]
+                    },
+                    {
+                      "t": "button", 
+                      ":class": "(help) ? 'active' : ''", 
+                      "v-on:click": "help = !help",
+                      "c": [
+                        {
+                          "t": "i", 
+                          "class": "fas fa-question"
+                        }
+                      ]
+                    }, 
+
+
+                  ]
+
+                }
+            ]
+          },
+          {
+            "class": "function_input",
+            "c": [
+              {
+                "t": "label", 
+                "class": "f_str",
+                "v-html": "'f(x) = '+mode.f_str_html"
+              }, 
+              {
+                "t": "label", 
+                "class": "f_str",
+                "v-html": "'f(x) = '+mode.f_str_variables_html"
+              }, 
+              {
+                "class": "f_inputs",
+                "c":[
+                  {
+                    "v-if": "false",
+                    "v-for": "(input, key) in mode.inputs",
+                    "t": "input", 
+                    "type": "text", 
+                    ":style": "'color:'+(input.color != undefined) ? input.color : ''",
+                    "v-model": "mode.inputs[key].value", 
+                  },
+                  {
+                    "t": "input", 
+                    "type": "text", 
+                    "v-model": "mode.f_str_custom_input", 
+                    "v-on:input": "on_input_f_str_custom_input"
+                  }
+                ]
+              },
+              
+            ]
+          }, 
+          {
+            "class": "points_inputs d-flex", 
+            "v-if": "false",
+            "c": [
+              {
+                "class": "flex-col-6 d-flex flex-wrap", 
+                "c":[ 
+                  {
+                    "t":"button",
+                    "v-on:click": "set_p_active(p1)",
+                    ":class": "(p_active == p1) ? 'active' : ''",
+                    ":class": "p1.color",
+                    "class": "flex-col-12",
+                    "v-html": "'p1 : ' +p1.x +'|'+ p1.y",
+                  },
+                  // {
+                  //   "t": "input",
+                  //   "class": "flex-col-6",
+                  //   "v-model": "p1.x"
+                  // },
+                  // {
+                  //   "t": "input",
+                  //   "class": "flex-col-6",
+                  //   "v-model": "p1.y"
+                  // }
+
+                ]
+              },
+              {
+                "class": "flex-col-6 d-flex flex-wrap", 
+                "c":[ 
+                  {
+                    "t":"button",
+                    "v-on:click": "set_p_active(p1)",
+                    ":class": "(p_active == p2) ? 'active' : ''",
+                    ":class": "p2.color",
+                    "class": "flex-col-12",
+                    "v-html": "'p2 : ' +p2.x +'|'+ p2.y",
+                  },
+                  // {
+                  //   "t": "input",
+                  //   "class": "flex-col-6",
+                  //   "v-model": "p2.x"
+                  // },
+                  // {
+                  //   "t": "input",color
+                  //   "v-model": "p2.y"
+                  // }
+
+                ]
+              }
+            ]
+          }
+        ]
+
+      }, 
+      {
+        "class": "mode_inputs d-flex flex-column", 
+        "c": [
+          {
+            "t": "input", 
+            "type": "range", 
+            "class": "slider",
+            "orient": "vertical", 
+            "v-model": "slider",
+            ":min":'(active_input) ? active_input.min : 0 ', 
+            ":max":'(active_input) ? active_input.max : 0 ', 
+            ":step": "(active_input) ? (active_input.step) ? active_input.step : 1 : 1"
+          },
+          {
+                "class": "f_buttons",
+                "c":[
+                  {
+                    "v-for": "(input, key) in mode.inputs",
+                    "v-if": "input.button_name != undefined",
+                    "t": "button", 
+                    ":style": "'color:'+input.color",
+                    "v-html": "input.button_name + ':' + input.value", 
+                    ":class": "(active_input == input) ? ' active' : '' ",  
+                    "v-on:click": "set_active_input(input)"
+                  }
+                ]
+              }
+        ]
+
+      }
+    ]
+  }
+));
+
+  /*
+  maybe used later if multiple lines should be drawn , for example for intersection of two lines 
+  Vue.component('line', {
+  data: function () {
+    return {
+      count: 0
+    }
+  },
+  template: '<button v-on:click="count++">You clicked me {{ count }} times.</button>'
+})
+*/
+
+
+
+window.vueObject = new Vue({
+  el: '#app',
+  data: {
+    console_messages: [],
+    display_console: false, 
+    p_active: null,   
+    f_str : '',
+    lines: [
+      {
+        "strokeStyle": "red",
+        points: [
+          {
+            
+            x: 0, 
+            y: 0
+          }, 
+          {
+            x: 100, 
+            y: 100
+          }
+        ]
+      }
+    ],
+    fillTexts: [
+      {
+          "font": "10px arial", 
+          "fillStyle": "yellow", 
+          "text": "example", 
+          "x": 0, 
+          "y": 0, 
+      }
+    ],
+    modes_selection: false, 
+    help: false, 
+    canvas_mousedown : false, 
+    canvas_touches_delta : 0, 
+    canvas_mousedown_xy: {
+      x: 0, 
+      y: 0
+    },
+    global_font_size_relative: 0,
+    canvas_settings: {
+      display:false, 
+      grid_pi: false, 
+      global_font_size: {
+        min: 0, 
+        max: 1, 
+        step: 0.01, 
+        reset_value: 1,
+        value: 1,
+      },
+      bg_transparency: {
+        min: 0, 
+        max: 1, 
+        step: 0.01, 
+        reset_value: 1,
+        value: 1,
+      },
+      offset_y: {
+        min: 0, 
+        max: 20, 
+        step: 0.1, 
+        reset_value: 10,
+        value: 0,
+      },
+      offset_x: {
+        min: 0, 
+        max: 20, 
+        step: 0.1, 
+        reset_value: 10,
+        value: 0,
+      },
+      scale: {
+        min: 0, 
+        max: 20, 
+        step: 0.1, 
+        reset_value: 10,
+        value: 10,
+      },
+      global_alpha: {
+        min: 0, 
+        max: 1, 
+        step: 0.1, 
+        reset_value: 0.6,
+        value: 0.6,
+      },
+      grid_size: {
+        min: 0, 
+        max: 1, 
+        step: 0.1, 
+        reset_value: 0.2,
+        value: 0.2,
+      }, 
+      grid_step: {
+        min: 0, 
+        max: 10, 
+        step: 1, 
+        reset_value:2,
+        value: 2,
+      }, 
+      grid_length: {
+        min: 0, 
+        max: 1000, 
+        step: 50, 
+        reset_value: 200,
+        value: 200,
+      }
+    },
+    slider: 0, 
+    active_input: null,
+    mode: {}, 
+    modes: [
+      {
+      "name": "linear",
+        "f_str": '', 
+        "schnittpunkte_y": function(){
+          var input_q = this.inputs.filter(asdf => asdf.name == "q")[0];
+          var x = 0;
+          var y = input_q.value;
+          return {x:x, y:y, fillStyle:input_q.color,font:"0.2rem arial", radius:1, "text": "schnP_y: "+x+" | "+y};
+        },
+        "schnittpunkte_x": function(){
+          var input_q = this.inputs.filter(asdf => asdf.name == "q")[0];
+          var input_delta_y = this.inputs.filter(asdf => asdf.name == "delta_y")[0];
+          var input_delta_x = this.inputs.filter(asdf => asdf.name == "delta_x")[0];
+          var m = parseFloat(input_delta_y.value) / parseFloat(input_delta_x.value);
+          var x = - parseFloat(input_q.value) / parseFloat(m);
+          
+          var y = 0;
+          return {x:x, y:y, fillStyle:input_q.color,font:"0.2rem arial", radius:1, "text": "schnP_x: "+x+" | "+y};
+        },
+        "f_evald": function(x){}, 
+        "f_str_custom_input": "",
+        "inputs": [
+
+          {
+            "button_name": "Δy",
+            "name": "delta_y", 
+            "min": -10, 
+            "max": 10, 
+            "color": "orange", 
+            "value": 1, 
+          },
+          {
+            "value": "/", 
+          },
+          {
+            "button_name": "Δx",
+            "name": "delta_x", 
+            "min": -10, 
+            "max": 10, 
+            "color": "magenta", 
+            "value": 1, 
+          },
+          {
+            "value": " * x + ", 
+          },
+          {
+            "button_name": "q",
+            "name": "q", 
+            "min": -100, 
+            "max": 100, 
+            "color": "lightgreen", 
+            "value": 10, 
+          }
+        ]
+      
+    },
+    {
+      "name": "sinus", 
+      "f_evald": function(x){}, 
+      "f_str_custom_input": "",
+      "inputs": [
+          {
+            "value": "Math.sin( x * ", 
+          },
+          {
+            "button_name": "f",
+            "name": "frequency", 
+            "min": -0.01, 
+            "max": 1, 
+            "color": "fuchsia", 
+            "step": "0.01",
+            "value": 0.1, 
+          },
+          {
+            "value": "+", 
+          }, 
+          {
+            "button_name": "x_offset",
+            "name": "x_offset", 
+            "min": -10, 
+            "max": 10, 
+            "color": "yellow", 
+            "step":0.01,
+            "value": 0, 
+          },
+          {
+            "value": " ) *", 
+          },
+          {
+            "button_name": "a",
+            "name": "amplitude", 
+            "min": -100, 
+            "max": 100, 
+            "color": "aqua", 
+            "value": 10, 
+          },
+
+          {
+            "value": "+", 
+          },
+          {
+            "button_name": "q",
+            "name": "q", 
+            "min": -100, 
+            "max": 100, 
+            "color": "lightgreen", 
+            "value": 0, 
+          }
+      ]
+    },
+    {
+      "name": "quadratisch_abc",
+        "f_str": '', 
+        "schnittpunkte_y": function(){
+          var x  = 0; 
+          var input_c = this.inputs.filter(asdf => asdf.name == "c")[0];
+          var y = input_c.value;
+          return {x:x, y:y, fillStyle:input_c.color,font:"0.3rem arial", radius:1, "text": "schnP_y: "+x+" | "+y};
+        },
+        "schnittpunkte_x": function(){
+
+          var input_a = this.inputs.filter(asdf => asdf.name == "a")[0];
+          var input_b = this.inputs.filter(asdf => asdf.name == "b")[0];
+          var input_c = this.inputs.filter(asdf => asdf.name == "c")[0];
+          
+          if(input_c >= 0 || input_a < 0){
+            return [];
+          }
+          
+          var a = parseFloat(input_a.value);
+          var b = parseFloat(input_b.value);
+          var c = parseFloat(input_c.value);
+
+
+          var x_1 = (0-b - Math.sqrt((Math.pow(b, 2)- 4*a*c))) / (2*a);
+          var x_2 = (0-b + Math.sqrt((Math.pow(b, 2)- 4*a*c))) / (2*a);
+
+
+          var y = 0;
+          
+          return [
+          {x:x_1, y:0, fillStyle:'lightgrey',font:"0.3rem arial", radius:1, "text": "schnP_x_1: "+x_1+" | "+y},
+          {x:x_2, y:0, fillStyle:'lightgrey',font:"0.3rem arial", radius:1, "text": "schnP_x_2: "+x_2+" | "+y}
+          ]
+        },
+        "scheitelpunkt": function(){
+          
+          var input_a = this.inputs.filter(asdf => asdf.name == "a")[0];
+          var input_b = this.inputs.filter(asdf => asdf.name == "b")[0];
+          var input_c = this.inputs.filter(asdf => asdf.name == "c")[0];
+
+          var a = parseFloat(input_a.value);
+          var b = parseFloat(input_b.value);
+          var c = parseFloat(input_c.value);
+
+          var x = -b/(2*a);
+          var y =  this.f_evald(x);
+          return {x:x, y:y, fillStyle:"lightgrey",font:"0.3rem arial", radius:1, "text": "scheitelpunkt (-b / 2*a): "+x+" | "+y};
+
+        },
+        "f_evald": function(x){}, 
+        "f_str_custom_input": "",
+        "inputs": [
+          {
+            "button_name": "a",
+            "name": "a", 
+            "min": -1, 
+            "max": 1, 
+            "color": "aqua", 
+            "value": 1,
+            "step": "0.01" 
+          },
+          
+          {
+            "value": "* ( x * x ) + ", 
+          },
+          
+          {
+            "button_name": "b",
+            "name": "b", 
+            "min": -10, 
+            "max": 10, 
+            "color": "burlywood", 
+            "value": 1, 
+            "step": "0.01" 
+
+          },
+          {
+            "value": "* x +", 
+          },
+          {
+            "button_name": "c",
+            "name": "c", 
+            "min": -100, 
+            "max": 100, 
+            "color": "lightgreen", 
+            "value": 1, 
+          },
+          
+        ]
+      
+    },
+    {
+      "name": "quadratisch_scheitelpunktform",
+      "f_evald": function(x){},   
+      "f_str_custom_input": "",
+      "inputs": [
+          {
+            "button_name": "a",
+            "name": "a", 
+            "min": -1, 
+            "max": 1, 
+            "color": "cyan", 
+            "value": 1,
+            "step": "0.01" 
+          },
+          {
+            "value": "* ( x + ", 
+          },
+          {
+            "button_name": "x_offset",
+            "name": "x_offset", 
+            "min": -100, 
+            "max": 100, 
+            "color": "burlywood", 
+            "value": 10,
+            "step": "0.01" 
+
+          },
+          {
+            "value": ") ² + ", 
+          },
+          {
+            "button_name": "q",
+            "name": "q", 
+            "min": -100, 
+            "max": 100, 
+            "color": "lightgreen", 
+            "value": 1, 
+          },
+
+        ]
+    }, 
+    {
+      "name": "quadratisch_nullstellenform",
+      "f_evald": function(x){},   
+      "f_str_custom_input": "",
+      "inputs": [
+          {
+            "button_name": "a",
+            "name": "a", 
+            "min": -1, 
+            "max": 1, 
+            "color": "cyan", 
+            "value": 1,
+            "step": "0.01" 
+          },
+          {
+            "value": "* ( x + ", 
+          },
+          {
+            "button_name": "x1",
+            "name": "x1", 
+            "min": -100, 
+            "max": 100, 
+            "color": "red", 
+            "value": 10,
+          },
+          {
+            "value": ") * ( x + ", 
+          },
+          {
+            "button_name": "x2",
+            "name": "x2", 
+            "min": -100, 
+            "max": 100, 
+            "color": "burlywood", 
+            "value": 10,
+          },
+          {
+            "value": ") + ", 
+          },
+          {
+            "button_name": "q",
+            "name": "q", 
+            "min": -100, 
+            "max": 100, 
+            "color": "lightgreen", 
+            "value": 1, 
+          },
+
+        ]
+    }, 
+    ],
+    p1: {
+      color:"yellow",
+      x:0, 
+      y:0, 
+      text: "p1",
+      font: "0.3rem arial" 
+    },
+    p2: {
+      color:"yellow",
+      x:0,
+      y:0, 
+      text: "p2",
+      font: "0.3rem arial" 
+    },
+    intersection_point_x_axis : {x: 0,y: 0}, 
+    intersection_point_y_axis : {x: 0,y: 0},
+    sharing_url_separator:"#",
+    func:"f(x)=5/3*x",
+    coordinates:false, 
+    sliders: false, 
+    sliders_type: '',
+    slider_m : 0,
+    slider_delta_y : 0,
+    slider_delta_x : 0, 
+    slider_q: 0, 
+    slider_pow_x: 0, 
+    slider_a: 0, 
+    slider_f: 0, 
+    x: 1, 
+    p1_x:1, 
+    p1_y:1, 
+    p2_x:1,
+    p2_y:1, 
+    a:1, 
+    b:1, 
+    c: 1, 
+    d:1, 
+    points_length:0, 
+    points:[],
+    arcs: [],
+    ctx_fill_style:"#333", 
+    ctx_stroke_style:"#eee", 
+    func_focused: false, 
+    sharing_url_timeout: null, 
+    script_hash: 0, 
+  }, 
+  updated:function(){
+    // var self = this;
+    // clearTimeout(this.sharing_url_timeout);
+    // this.sharing_url_timeout = window.setTimeout(function(){
+    //   //console.log("timeout executed");
+    //   self.change_location_url();
+    // },2000)
+    this.change_location_url();
+  },
+  mounted:function(){
+    var self = this;
+
+    //extend console 
+    var log = console.log;
+
+    console.log = function(){
+
+        // 1. Convert args to a normal array
+        var args = Array.from(arguments);
+        // OR you can use: Array.prototype.slice.call( arguments );
+        self.console_messages.push(args);
+        // 3. Pass along arguments to console.log
+        log.apply(console, args);
+    }
+
+
+    this.script_hash = this.hash_string(document.querySelector("#main_script").innerText);
+
+    this.canvas = document.getElementById("canvas");
+    this.ctx = this.canvas.getContext("2d");
+
+
+    var ctx_functions_extensions = [
+      "fillRect", 
+      "fillText", 
+      "lineTo", 
+      "moveTo", 
+      "arc", 
+    ]
+    //extend the ctx.lineTo, ctx.moveTo, ctx.fillRect etc  functions since, the y axis is mirrored in canvas and text would be rotated 180 degrees if ctx.rotate would be used 
+    
+    for(let key in ctx_functions_extensions){
+      //let is important here
+      let name = ctx_functions_extensions[key];
+      
+      let ctx_original_function = this.ctx[name];
+
+      this.ctx[name] = function(){
+
+        //console.alert("please dont use any of the following ctx functions" + ctx_functions_extensions);
+
+
+        // Do stuff before
+        /*
+          y = (-1) *  y;
+          oy = (-1) *  oy;
+        */
+        var y_index = 1;
+        if(name == "fillText"){
+          //args: text, x, y
+          y_index = 2;
+        }
+        arguments[y_index] = (-1) *  arguments[y_index];
+        if(name == "fillRect"){
+          arguments[3] = (-1) *  arguments[3];
+        }
+        //console.log(arguments);
+        //console.log("lineto extended called");
+        // Call it
+        let result = ctx_original_function.apply(this, arguments);
+        // Do stuff after
+        // ...
+        return result; // Or something else if you prefer
+      }
+    }
+    
+
+    window.onresize = this.refactor_canvas;
+
+    this.ctx.fillStyle = this.ctx_fill_style;
+    this.ctx.strokeStyle =this.ctx_stroke_style;
+    
+    this.mode = this.modes[0];
+    this.active_input = this.mode.inputs[0];
+
+    this.lines = [];
+
+    this.calculate_points();
+    this.render_canvas();
+    this.load_from_url();
+    this.render_canvas();
+
+    self.refactor_canvas();
+
+    window.setTimeout(function(){
+      self.refactor_canvas();
+      //console.log(window.event.deltaY);
+      self.canvas_settings.scale.value = self.canvas_settings.scale.value - -10 * (self.canvas_settings.scale.value)*0.001;
+      self.global_font_size_relative = 5/self.canvas_settings.scale.value *0.2;
+      self.canvas_settings.grid_step.value = parseInt(100/self.canvas_settings.scale.value)+1;
+      self.calculate_points();
+      self.render_canvas();
+      
+    }, 500)
+    
+  },
+  watch:{
+    console_messages: function(){
+      if(this.display_console){
+        window.setTimeout(function(){
+        var cel = document.querySelector(".console");
+        cel.scrollTo(0,cel.scrollHeight);
+      },10);
+      }
+    },
+    mode: function(){
+      console.log("watch mode");
+      for(var key in this.mode.inputs){
+        var input = this.mode.inputs[key];
+        if(input.button_name != undefined){
+          this.active_input = input;
+          break;
+        }
+      }
+      if(this.mode.name == "sinus"){
+        this.canvas_settings.grid_pi = true;
+      }else{
+        this.canvas_settings.grid_pi = false;
+      }
+    },
+    canvas_settings:{
+        deep: true,
+        handler: function(new_val, old_val){
+        console.log("watch canvas_settings");
+        this.refactor_canvas();
+      }
+    },
+    active_input: function(new_val, old_val){
+      this.slider = new_val.value;
+    },
+    slider: function(new_val, old_val){
+      this.slider = new_val;
+      this.active_input.value = new_val;
+    },
+    slider_m: function(new_val, old_val){this.slider_m = parseFloat(new_val).toFixed(2);},
+    slider_delta_x: function(new_val, old_val){this.slider_delta_x = parseFloat(new_val).toFixed(2);},
+    slider_delta_y: function(new_val, old_val){this.slider_delta_y = parseFloat(new_val).toFixed(2);},
+    slider_q: function(new_val, old_val){this.slider_q = parseFloat(new_val).toFixed(2);},
+    p1_x: function(new_val, old_val){this.p1_x = parseFloat(new_val).toFixed(2);},
+    p1_y: function(new_val, old_val){this.p1_y = parseFloat(new_val).toFixed(2);},
+    p2_x: function(new_val, old_val){this.p2_x = parseFloat(new_val).toFixed(2);},
+    p2_y: function(new_val, old_val){this.p2_y = parseFloat(new_val).toFixed(2);},
+    func: function(new_val, old_val){
+      var func_string = new_val.split("=").pop();
+      this.func_evaluated = new Function("x", "return "+func_string);
+    }, 
+    "mode.inputs": {
+      deep: true,
+      handler: function(new_val, old_val){
+        //console.log("mode.inputs watcher triggered");
+
+        this.mode.f_str = "";
+        this.mode.f_str_custom_input = "";
+        this.mode.f_str_html = "";
+        this.mode.f_str_variables_html = "";
+        
+        for(var i in new_val){
+          var input = new_val[i];
+          this.mode.f_str += input.value;
+
+          this.mode.f_str_html += "<span style=\"color:"+ ((input.color != undefined) ? input.color : "" ) + "\">";
+          this.mode.f_str_html += " "+input.value+" ";
+          this.mode.f_str_html += "</span>";
+
+          this.mode.f_str_variables_html += "<span style=\"color:"+ ((input.color != undefined) ? input.color : "" ) + "\">";
+          this.mode.f_str_variables_html += " "+((input.button_name != undefined) ? input.button_name: input.value )+" ";
+          this.mode.f_str_variables_html += "</span>";
+        }
+        
+        if(this.mode.name == "quadratisch_scheitelpunktform"){
+          this.mode.f_str = "";
+          this.mode.f_str += this.mode.inputs.filter(asdf => asdf.name == "a")[0].value; 
+          this.mode.f_str += "*"; 
+          this.mode.f_str += "(";
+          this.mode.f_str += "x";
+          this.mode.f_str += "+";
+          this.mode.f_str += this.mode.inputs.filter(asdf => asdf.name == "x_offset")[0].value; 
+          this.mode.f_str += ")";
+          this.mode.f_str += "*"; 
+          this.mode.f_str += "(";
+          this.mode.f_str += "x";
+          this.mode.f_str += "+";
+          this.mode.f_str += this.mode.inputs.filter(asdf => asdf.name == "x_offset")[0].value; 
+          this.mode.f_str += ")";
+          this.mode.f_str += "+";
+          this.mode.f_str += this.mode.inputs.filter(asdf => asdf.name == "q")[0].value; 
+
+        }
+
+        this.mode.f_str_custom_input = "f(x) = "+ this.mode.f_str;
+
+        this.calculate_points(); 
+
+        this.p1.x = this.points[0].x;
+        this.p1.y = this.points[0].y;
+        this.p2.x = this.points[this.points.length-1].x;
+        this.p2.y = this.points[this.points.length-1].y;
+      
+        this.render_canvas();
+        
+
+
+      }
+    },
+  },
+  methods:{
+    on_input_f_str_custom_input(){
+      var f_str = this.mode.f_str_custom_input.split("f(x) = ").pop();
+      f_str = f_str.split("f(x) =").pop();
+      f_str = f_str.split("f(x)=").pop();
+      //
+
+      this.mode.f_str_html = "custom";
+      this.mode.f_str_variables_html = "custom";
+      this.mode.f_str = f_str;
+      this.calculate_points();
+      this.render_canvas();
+    },
+    reset_input_value_to_data_default_value(){
+      let target = window.event.target;
+      window.setTimeout(function(){
+        console.log(target);
+        var default_value = target.getAttribute("data-default-value");
+        if(default_value != undefined){
+          target.value = default_value;
+          target.dispatchEvent(new Event('input'));
+        }
+      }, 100)
+    },
+    set_p_active(point){
+      this.lines[0] =             {
+              "strokeStyle": "red",
+              points: [
+              ]
+            };
+
+      this.p_active = point;
+    },
+    set_active_input(input){
+      this.active_input = input;
+    },
+    click_canvas(){
+
+      //this.p_active = false;
+      var relative_x_y = this.get_relative_canvas_client();
+      var x = relative_x_y.x;
+      var y = relative_x_y.y;
+
+      if(this.p_active){
+
+        if(this.lines.length == 0){
+          this.lines.push(
+            {
+              "strokeStyle": "red",
+              points: [
+              ]
+            }
+          )
+        }else{
+          if(this.lines[0].points.length < 2){
+              this.lines[0].points.push(
+                {
+                  x: x, 
+                  y: y, 
+                },
+                {
+                  x: x, 
+                  y: y, 
+                }
+              )
+          }
+          // if(this.lines[0].points.length == 2){
+          //   this.p_active = null;
+          // }
+        }
+
+        this.render_canvas();
+
+      }
+    },
+    get_single_mouse_or_touch_position(){
+      var x = window.event.clientX;
+      var y = window.event.clientY;
+      if(window.event.type.indexOf("touch") != -1){
+        var x = window.event.touches[0].clientX;
+        var y = window.event.touches[0].clientY;
+      }
+      return {x:x, y:y};
+    },
+    get_relative_canvas_client(){
+      var e = window.event;
+      var client_pos = this.get_single_mouse_or_touch_position();
+        // e = Mouse click event.
+        var rect = e.target.getBoundingClientRect();
+        var x = client_pos.x - rect.left - this.canvas_settings.offset_x.value; //x position within the element.
+        var y = client_pos.y - rect.top - this.canvas_settings.offset_y.value;  //y position within the element.
+        //console.log( Date.now()+ "relative clientX | clientY : " + x+"|"+y);
+        // since canvas coordinate field is centered and rotated, we have to change x and y 
+        //console.log(x,y);
+
+        //invert y 
+        y = rect.height - y;
+
+        x = x - (rect.width / 2);
+        y = y - (rect.height / 2);
+
+        x = x / this.canvas_settings.scale.value;
+        y = y / this.canvas_settings.scale.value;
+        return {x:x, y:y};
+    },
+    dblclick_canvas(){
+      this.canvas_settings.offset_x.value = 0;
+      this.canvas_settings.offset_y.value = 0;
+    },
+    mousedown_canvas(){
+      var client_pos = this.get_single_mouse_or_touch_position();
+      if(window.event.touches != undefined && window.event.touches.length > 1){
+      }
+      this.canvas_mousedown = true;
+      this.canvas_mousedown_xy.x = client_pos.x;
+      this.canvas_mousedown_xy.y = client_pos.y;
+      this.canvas_settings.offset_x.mousedown_cached_value = this.canvas_settings.offset_x.value;
+      this.canvas_settings.offset_y.mousedown_cached_value = this.canvas_settings.offset_y.value;
+
+    },
+    mouseup_canvas(){
+      
+      this.canvas_mousedown = false;
+      console.log(this.canvas_mousedown);
+
+    },
+    wheel_canvas(){
+      this.zoom_canvas(window.event.deltaY);
+    },
+    zoom_canvas(value){
+      //console.log(window.event.deltaY);
+      this.canvas_settings.scale.value = this.canvas_settings.scale.value - value * (this.canvas_settings.scale.value)*0.001;
+      this.global_font_size_relative = 5/this.canvas_settings.scale.value *0.2;
+      this.canvas_settings.grid_step.value = parseInt(100/this.canvas_settings.scale.value)+1;
+      this.calculate_points();
+      this.render_canvas();
+    },
+    mousemove_canvas(){
+      //console.log(this.canvas_mousedown);
+      if(window.event.touches != undefined && window.event.touches.length > 1){
+        var delta_touches =  Math.abs(window.event.touches[0].clientX + window.event.touches[0].clientY) - ( window.event.touches[1].clientX + window.event.touches[1].clientY);
+        var zoom = delta_touches;
+        if(delta_touches > this.canvas_touches_delta){
+          zoom = -delta_touches;
+        }
+        this.zoom_canvas(zoom);
+        this.canvas_touches_delta = delta_touches;
+        return;
+      }
+
+      var client_pos = this.get_single_mouse_or_touch_position();
+        
+        if(this.canvas_mousedown){
+          var delta_x = this.canvas_mousedown_xy.x - client_pos.x;
+          var delta_y = this.canvas_mousedown_xy.y - client_pos.y;
+         // console.log(delta_x);
+        //  console.log(delta_y);
+          this.canvas_settings.offset_x.value = this.canvas_settings.offset_x.mousedown_cached_value - delta_x;
+          this.canvas_settings.offset_y.value = this.canvas_settings.offset_y.mousedown_cached_value - delta_y;
+        }
+
+        var relative_x_y = this.get_relative_canvas_client();
+        var x = relative_x_y.x;
+        var y = relative_x_y.y;
+
+        //console.log(x,y);
+        var point = this.points[0];
+        var delta_y = Math.abs(point.y - y);
+        var delta_x = Math.abs(point.x - x);
+        var delta_sum = delta_y + delta_x ; 
+        var delta_hypotenuse = delta_y * delta_y + delta_x * delta_x;
+
+
+        var closest_point = point;
+        for(var i in this.points){
+            var point = this.points[i];
+            var delta_y = Math.abs(point.y - y);
+            var delta_x = Math.abs(point.x - x);
+            var delta_sum_2 = delta_y + delta_x;
+            var delta_hypotenuse_2= delta_y * delta_y + delta_x * delta_x;
+            if(delta_hypotenuse_2 < delta_hypotenuse){
+                var closest_point = point;
+                delta_sum = delta_sum_2;
+                delta_hypotenuse = delta_hypotenuse_2;
+            }
+        }
+        this.ctx.beginPath();
+        this.ctx.strokeStyle = "green";
+        this.ctx.arc(closest_point.x, closest_point.y, 1/this.canvas_settings.scale.value, 0, 2 * Math.PI, true);
+        this.ctx.stroke();
+        this.fillTexts = [];
+        this.arcs = [];
+
+        var padding = 0;
+        this.fillTexts.push({
+            "fillStyle": "yellow", 
+            "x": closest_point.x + padding,
+            "y": closest_point.y + padding, 
+            "text": parseFloat(closest_point.x).toFixed(2) + " | " + parseFloat(closest_point.y).toFixed(2)
+        });
+        this.arcs.push({
+            "strokeStyle": "yellow", 
+            radius: 5/this.canvas_settings.scale.value,
+            "x": closest_point.x,
+            "y": closest_point.y, 
+            "fillStyle": "yellow"
+        });
+
+
+        // if(this.p_active){
+
+
+        //   if(this.lines.length >= 1){
+        //     if(this.lines[0].points.length == 2){
+        //       this.lines[0].points[1].x = x;
+        //       this.lines[0].points[1].y = y;
+        //     }
+        //   }
+
+        //   this.fillTexts.push({
+        //     "strokeStyle": "purple", 
+        //     "font": "20px arial", 
+        //     "x": x,
+        //     "y": y, 
+        //     "text": "click to set " + this.p_active.text
+        //   });
+
+        // }
+        this.render_canvas();
+
+    },
+    is_dev_env: function(){
+        return !window.location.href.indexOf("file:///") != 0
+    },
+    change_location_url: function(){
+      if(!this.is_dev_env()){
+        window.location.href = this.get_sharing_url();
+      }
+    },
+    get_url_get_parameter: function(parameterName) {
+        var result = null,
+            tmp = [];
+            window.location.hash
+            .substr(1)
+            .split(this.sharing_url_separator)
+            .forEach(function (item) {
+            tmp = item.split("=");
+            if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+            });
+        return result;
+    },
+    get_sharing_url: function(){
+      var parts = window.location.href.split(this.sharing_url_separator);
+      var clear_url = parts.shift();
+      //to prevent big link, remove unneccesary data here
+      
+      let p2 = Object.assign({}, this._data);
+      p2.points = [];
+
+      var base64 = btoa((encodeURIComponent(JSON.stringify(p2))));
+
+      return clear_url + this.sharing_url_separator + "b64_json=" + base64
+    },
+    share_url: function(){
+        prompt("Sharing url:", this.get_sharing_url());
+    },
+    load_from_url: function(){
+        if(this.get_url_get_parameter("b64_json") != null){
+            var url_data = JSON.parse(decodeURIComponent(atob(this.get_url_get_parameter("b64_json"))));
+            if(url_data.script_hash != undefined && url_data.script_hash == this.script_hash){
+              for(var i in url_data){
+                  this[i] = url_data[i];
+              }
+            }else{
+              console.warn("vueObject.script_hash do not match: cannot load data from older version of the application");
+            }
+        }
+    },
+    refactor_canvas:function(){
+    
+      this.ctx.globalAlpha = 1; 
+      this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+      this.canvas.width = this.canvas.parentElement.getBoundingClientRect().width;
+      this.canvas.height = this.canvas.parentElement.getBoundingClientRect().height;
+      
+      this.ctx.translate(this.canvas.width /2 + this.canvas_settings.offset_x.value , this.canvas.height/2 + this.canvas_settings.offset_y.value);
+      this.ctx.scale(this.canvas_settings.scale.value, this.canvas_settings.scale.value);
+
+      //this.ctx.transform(1, 0, 0, -1, 0, this.canvas.height)
+      //this.ctx.save();
+      //this.ctx.scale(1,-1);
+
+      //this.ctx.rotate(Math.PI * 2 / 360 * 90);
+      this.ctx.globalAlpha = 0.5; 
+      this.points_length = document.querySelector("#canvas").width / 2;
+
+      this.render_canvas();
+
+    },
+
+    calculate_points: function(){
+      
+      this.mode.f_evald = new Function("x", "return "+this.mode.f_str);
+
+      this.points = [];
+      for(var i =0-this.points_length;i<this.points_length;i++){
+        //console.log((1 / parseFloat(this.canvas_settings.scale.value)));
+        var ni = i * (1 / parseFloat(this.canvas_settings.scale.value * 0.5));
+        var x = ni;
+        var y = this.mode.f_evald(ni);
+        this.points.push({x:x,y:y});
+      }
+    },
+    render_canvas: function(){
+
+
+      var f_punkte = [
+        "schnittpunkte_x", 
+        "schnittpunkte_y", 
+        "scheitelpunkt",
+      ];
+      this.draw_schnittpunkte = false;
+      if(this.draw_schnittpunkte){
+
+        for(var key in f_punkte){
+          var f_name = f_punkte[key];
+
+          if(this.mode[f_name] != undefined){
+          var ps = this.mode[f_name]();
+          if(!Array.isArray(ps)){
+            ps = [ps];
+          }
+          for(var key in ps){
+            var p = ps[key];
+            this.fillTexts.push(p);
+            this.arcs.push(p);
+          }
+        }
+        }
+      }
+
+      //console.log(this.fillTexts);
+
+
+      this.clear_canvas();
+      this.draw_grid();
+      
+      this.ctx.fillStyle ="red";
+      
+      for(var key in this.points){
+        var point = this.points[key];
+        var w = 1 * (10/this.canvas_settings.scale.value); 
+        var h = 1 * (10/this.canvas_settings.scale.value);  
+        this.ctx.fillStyle = "rgba(255, 12, 12, 0.35)";
+        if(key % 10 == 0){
+          this.ctx.fillStyle = "rgba(255, 12, 12, 0.8)";
+        }
+        this.ctx.fillRect(point.x - w/2, point.y -h/2, w, h);
+      }      
+
+      //this.ctx.restore();
+      for(var i in this.fillTexts){
+        var text = this.fillTexts[i];
+        var font = this.global_font_size_relative +"rem arial";
+        this.ctx.font = font;
+        if(text.fillStyle!= undefined){
+          this.ctx.fillStyle = text.fillStyle;
+        }
+        this.ctx.fillText(text.text, text.x, text.y);
+      }
+
+
+      //this.ctx.restore();
+      for(var i in this.lines){
+        var line = this.lines[i];
+        if(line.points.length >= 0){
+
+          this.ctx.beginPath();
+          this.ctx.strokeStyle = line.strokeStyle;
+          this.ctx.moveTo(line.points[0].x, line.points[0].y);
+
+          for(var i in line.points){
+            if(i == 0){
+              continue;
+            }
+            var point = line.points[i];
+            this.ctx.lineTo(point.x, point.y);
+          }
+          this.ctx.stroke();
+
+        }
+       }
+
+      for(var i in this.arcs){
+        var arc = this.arcs[i];
+
+        if(arc.fillStyle!= undefined){
+          this.ctx.fillStyle = arc.fillStyle;
+        }
+        this.ctx.beginPath();
+        this.ctx.arc(arc.x, arc.y, arc.radius,0,  2*Math.PI);
+        this.ctx.fill();
+      }
+
+      this.arcs = [];
+      this.fillTexts = [];
+
+    }, 
+    draw_grid:function(){
+      this.ctx.fillStyle =this.ctx_stroke_style;
+
+      this.ctx.beginPath();
+      this.ctx.arc(0, 0, this.canvas_settings.grid_size.value, 0, 2*Math.PI);
+      this.ctx.fill();
+        
+      this.ctx.lineWidth = 5/this.canvas_settings.scale.value*0.5;
+      this.ctx.strokeStyle = "rgba(255,255,255,0.7)"
+      this.ctx.beginPath();
+      this.ctx.moveTo(-this.canvas_settings.grid_length.value/2*this.canvas_settings.grid_step.value, 0);
+      this.ctx.lineTo(this.canvas_settings.grid_length.value/2*this.canvas_settings.grid_step.value, 0);
+      this.ctx.stroke();
+      this.ctx.beginPath();
+      this.ctx.moveTo(0,-this.canvas_settings.grid_length.value/2*this.canvas_settings.grid_step.value);
+      this.ctx.lineTo(0,this.canvas_settings.grid_length.value/2*this.canvas_settings.grid_step.value);
+      this.ctx.stroke();
+
+
+      for(var i =1;i<this.canvas_settings.grid_length.value;i++){
+        var v = i*this.canvas_settings.grid_step.value;
+
+        var pi_quarters_numerator = v;
+        var pi_quarters_nominator = 4;
+        for(var j = 0; j < 4; j++){
+          var pi_quarters_text = pi_quarters_numerator + "π" +"/" + pi_quarters_nominator;
+          
+          var pi_quarters_number = pi_quarters_numerator  * Math.PI / pi_quarters_nominator;
+
+          if(j%2 == 0){
+            var val = v;
+          }else{
+            var val = 0-v;
+            var pi_quarters_number = 0 - pi_quarters_number; 
+            var pi_quarters_x= 0; 
+            var pi_quarters_y = 0; 
+          }
+          var font_size = this.global_font_size_relative;
+          if(j<2){
+            var pi_quarters_x= pi_quarters_number; 
+            var pi_quarters_y = 0; 
+
+            var x = val;
+            var y = 0; 
+            var ox = 0;
+            var oy = parseFloat(this.canvas_settings.grid_size.value) +font_size*22; 
+          }else{
+            var pi_quarters_x= 0; 
+            var pi_quarters_y = pi_quarters_number; 
+            var y = val;
+            var x = 0;
+            var ox = parseFloat(this.canvas_settings.grid_size.value) +font_size*22; 
+            var oy = 0;
+          }
+          var pi_text = "";
+          if(pi_quarters_numerator % 4 == 0){
+            var pi_text = pi_quarters_numerator / 4 + "π";
+          }else{
+            var ganze = parseInt(pi_quarters_numerator / 4);
+            if(ganze >0){
+              pi_text += ganze;
+            }
+            var pi_quarters_numerator_modulo_four = pi_quarters_numerator % 4;
+            if(pi_quarters_numerator_modulo_four == 1){ pi_text += "\u00BC"}
+            if(pi_quarters_numerator_modulo_four == 2){ pi_text += "\u00BD"}
+            if(pi_quarters_numerator_modulo_four == 3){ pi_text += "\u00BE"}
+            pi_text += "π";
+          }
+          this.ctx.textBaseline = 'middle';
+          this.ctx.textAlign = "center";
+          this.ctx.font = font_size+"rem arial";
+
+          if(this.canvas_settings.grid_pi){
+            this.ctx.beginPath();
+            this.ctx.arc(pi_quarters_x , pi_quarters_y, font_size*10, 0, 2*Math.PI);
+            this.ctx.fillText(pi_text,pi_quarters_x+ox , pi_quarters_y+oy );
+          }else{
+            this.ctx.beginPath();
+            this.ctx.arc(x, y, font_size*5, 0, 2*Math.PI);
+            this.ctx.fillText(val, x+ox , y+oy );
+
+          }
+          this.ctx.fill();
+        
+        }
+        
+      }
+
+    },
+    clear_canvas:function(){
+      this.ctx.globalAlpha = 1;
+      this.ctx.fillStyle = "hsla(0, 0%, 20%, "+this.canvas_settings.bg_transparency.value+")";
+      this.ctx.fillRect(-this.canvas.width / 2, - this.canvas.height /2, this.canvas.width, this.canvas.height);
+      this.ctx.fillStyle =this.ctx_fill_style;
+      this.ctx.globalAlpha = this.canvas_settings.global_alpha.value;
+    },
+    f: function(angle_radians){
+      return (this.a * Math.sin(angle_radians * this.b + this.c) + this.d);
+    },
+    hash_string: function(str){
+    var hash = 0;
+    if (str.length == 0) return hash;
+    for (var i = 0; i < str.length; i++) {
+      var char = str.charCodeAt(i);
+      hash = ((hash<<5)-hash)+char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    return hash;
+  }
+    
+}
+})
+
+
+
+        </script>
+    </body>
+</html>
+
+
+
+

@@ -1,0 +1,1091 @@
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script type="module" src="https://cdn.space.unibe.ch/JsonToHtml.js"></script>
+
+<script src="https://cdn.space.unibe.ch/Fontawesome.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+
+<ul id="midi-list"></ul>
+<div id="debug"></div>
+<div id="app">
+
+
+</div>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+}
+body{
+    background:#333;
+    color:#eee;
+    min-width: 100vw;
+    min-height: 100vh;
+}
+h1,h2,h3,h4,h5,h6{
+    color:#eee !important;
+}
+#app, .content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+canvas{
+    position: fixed;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+}
+.inputs{
+    background: rgba(0,0,0.8);
+    position: fixed;
+    z-index: 1;
+}
+.img_container{
+    width: 100vmin;
+    padding-top: 100%;
+    position: relative;
+    position: relative;
+    background: black;
+}
+.akai_apc_mini{
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-image: url("akai_apc_mini.jpg");
+    /* width:100%; */
+    /* height:auto; */
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+ul#midi-list {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    background: black;
+    padding: 1rem;
+}
+.pads_groups{
+    display: flex;
+    flex-direction: column-reverse;
+
+}
+.pad_group{
+    display: flex;
+    flex-direction: row;
+
+}
+.pad {
+    width: 9.2%;
+    /* height: 100; */
+    background: rgba(222,222,222,0.5);
+    margin-right: 1.7%;
+    /* border: solid red; */
+    padding-top: 3.9%;
+    margin-bottom: 1.9%;
+    position: relative;
+}
+
+.pad_inner{
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    width:100%; 
+    height: 100%; 
+    word-break: break-all;
+    font-size: 10px;
+    color: black;
+    padding:0.2rem;
+}
+
+.pads_groups {
+    margin-left: 3.4%;
+    margin-top: 9.3%;
+}
+.pad.keydown_true{
+    background:red !important;
+}
+.sliders {
+    display: flex;
+    flex-direction: row;
+    background: rgba(21,234,211,0.2);
+    position: absolute;
+    left: 4.2%;
+    top: 62%;
+    width: 91.9%;
+    height: 20%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.slider {
+    position: relative;
+    width: 8%;
+    height: 100%;
+    background: rgba(222,0,0,0.1);
+    /* margin-right: 3.4%; */
+    z-index: 10;
+    border: 1px solid red;
+}
+.slider_inner {
+    width: 100%;
+    background: red;
+    position: absolute;
+    bottom: 10%;
+    height:10px;
+}
+</style>
+
+<script type="text/javascript">
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        document.getElementById("app").append(
+            jth.parse(
+                {
+                    t:"div",
+                    class: "content", 
+                    c: [
+                        {
+                            id: "audio", 
+                            t: "audio"
+                        },
+                        {
+                            t: "div",
+                            class: "img_container", 
+                            c: [
+                                {
+                                    "class": "akai_apc_mini",
+                                    c:[
+                                        {
+                                            class: "pads_groups", 
+                                            c:[
+                                                {
+                                                    "class":"pad_group",
+                                                    "v-for": "padgroup in akai_apc_mini.pads_groups",
+                                                    c:[
+                                                        {
+                                                            ":class": "`pad keydown_${pad.keydown.toString()}`",
+                                                            "v-for": "pad in padgroup.pads",
+                                                            "v-on:click" : "last_clicked_pad = pad",
+                                                            c: [
+                                                                {
+                                                                    class: "pad_inner", 
+                                                                    "v-html":"pad.file_name",
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            class: "sliders",
+                                            c:[
+                                                {
+                                                    "class":"slider",
+                                                    "v-for": "slider in akai_apc_mini.sliders",
+                                                    c:[
+                                                        {
+                                                            "class": "slider_inner",
+                                                            ":style": "`bottom:${akai_apc_mini.slider_min_perc+slider.value_percentage}%`",
+                                                            c: [
+                                                                {
+                                                                    class: "slider_inner2", 
+                                                                    "v-html":"slider.value8bit",
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+
+                                    ]
+                                },   
+                            ],
+                            "v-on:click": "bool = !bool"
+                        }
+                    ]
+                }, 
+            )
+        );
+
+        // generate pads groups
+        // var rows = 8; 
+        // var cols = 8; 
+        // var pads_groups =[];
+        // for(var i = 0; i < rows; i++){
+        //     var pad_group = {pads:[]}
+        //     pad_group.name = `pads_${i}_${(i*cols)+(cols-1)}`; 
+        //     for(var j = 0; j < cols; j++){
+        //         var pad = {
+        //             id: (i*cols) + j
+        //         }
+        //         pad_group.pads.push(pad)
+        //     }
+        //     pads_groups.push(pad_group)
+        // }
+        // console.log(JSON.stringify(pads_groups))
+
+            window.vueObject = new Vue({
+                el: '#app',
+                data: {
+                    development: true, 
+                    bool: false, 
+                    last_clicked_pad : {},
+                    akai_apc_mini: {
+                        midi_messages_send:{
+                            pad:{
+
+                                status_byte:{
+                                    light_on: 0b10010000, 
+                                    light_off: 0b10000000, 
+                                }, 
+                                data_byte1: "please_use_an_integer_of_the_padnumber0_to63", 
+                                data_byte2:{
+                                    green:1, 
+                                    green_blinking: 2, 
+                                    red:3, 
+                                    red_blinking: 4, 
+                                    orange:5, 
+                                    orange_blinking: 6
+                                }
+                                
+
+
+                            }
+                        },
+                        slider_min_perc : 10,
+                        slider_max_perc : 85,
+                        sliders:[
+                            {"value_u8_bit": 0, value_percentage : 0, id: 48},
+                            {"value_u8_bit": 0, value_percentage : 0, id: 49},
+                            {"value_u8_bit": 0, value_percentage : 0, id: 50},
+                            {"value_u8_bit": 0, value_percentage : 0, id: 51},
+                            {"value_u8_bit": 0, value_percentage : 0, id: 52},
+                            {"value_u8_bit": 0, value_percentage : 0, id: 53},
+                            {"value_u8_bit": 0, value_percentage : 0, id: 54},
+                            {"value_u8_bit": 0, value_percentage : 0, id: 55},
+                            {"value_u8_bit": 0, value_percentage : 0, id: 56},
+                        ],
+                        pads_groups: [{
+                            "pads": [{
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 0
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 1
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 2
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 3
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 4
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 5
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 6
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 7
+                            }],
+                            "name": "pads_0_7"
+                        }, {
+                            "pads": [{
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 8
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 9
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 10
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 11
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 12
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 13
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 14
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 15
+                            }],
+                            "name": "pads_1_15"
+                        }, {
+                            "pads": [{
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 16
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 17
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 18
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 19
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 20
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 21
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 22
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 23
+                            }],
+                            "name": "pads_2_23"
+                        }, {
+                            "pads": [{
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 24
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 25
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 26
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 27
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 28
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 29
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 30
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 31
+                            }],
+                            "name": "pads_3_31"
+                        }, {
+                            "pads": [{
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 32
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 33
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 34
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 35
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 36
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 37
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 38
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 39
+                            }],
+                            "name": "pads_4_39"
+                        }, {
+                            "pads": [{
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 40
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 41
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 42
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 43
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 44
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 45
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 46
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 47
+                            }],
+                            "name": "pads_5_47"
+                        }, {
+                            "pads": [{
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 48
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 49
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 50
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 51
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 52
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 53
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 54
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 55
+                            }],
+                            "name": "pads_6_55"
+                        }, {
+                            "pads": [{
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 56
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 57
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 58
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 59
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 60
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 61
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 62
+                            }, {
+                                "keydown": false,
+                                "light_color_index":0,
+                                "file_name": "click to select file",
+                                src: "",
+                                "id": 63
+                            }],
+                            "name": "pads_7_63"
+                        }]
+                        
+                    },
+                    arr: [
+                        {
+                            "val": 1,
+                        },
+                        {
+                            "val": 2,
+                        },
+                        {
+                            "val": 3,
+                        },
+                        {
+                            "val": 4,
+                        }
+                    ],
+                    url_b64_separator: "#",
+                    url_b64_prop: "b64_json", 
+                    url_b64_assignment_character: "=", 
+                    undo_redo_used : false, 
+                    data_to_b64_ignore_props: [
+                        "gl", 
+                        "overlay_canvas", 
+                        "image", 
+                        "data_history",
+                        "data_history_index",
+                        "uniform4fv_rgba_intensity_location", 
+                        "reset_history"
+                    ], 
+                    reset_history: false, 
+                    data_history: [
+
+                    ],
+                    data_history_index: 0, 
+                    data_change : false, 
+
+                },
+                updated: function(){
+
+                    console.log("updated");
+
+                    var self = this;
+
+                    self.data_change = true;
+
+                    self.write_b64_to_url();
+                                    
+                },
+                mounted: function () {
+
+
+
+                    var self = this;
+
+
+                    this.read_b64_from_url();
+
+                    //add first b64 to history
+                    this.reset_or_update_history_if_data_change();
+
+                    console.warn("!IMPORTANT: you are using write_b64_to_url, please set .development to true, to prevent unexpected behaviour in development, since vue _data will be stored and loaded from url")
+
+
+                    window.onmouseup = function(){
+                        //console.log(self.data_change);
+                        self.reset_or_update_history_if_data_change();
+                    }
+                    window.onkeyup = function(){
+                        self.reset_or_update_history_if_data_change();
+                    }
+
+                    window.onkeyup = function(event) {
+
+                        // if ctrl + z
+                        if(event.ctrlKey && event.which == 90){
+                            // if ctrl + shift + z
+                            if(event.shiftKey){
+                                if(self.data_history_index < self.data_history.length-1){
+                                    self.data_history_index++;
+                                }
+                            }
+                            // if only ctrl + z
+                            if(!event.shiftKey){
+                                if(self.data_history.length > 1 && self.data_history_index > 0){
+                                    self.data_history_index--;
+                                }
+                            }
+
+                            self.undo_redo_used = true;
+                            var b64_string = self.data_history[self.data_history_index];
+                            var data = self.b64_to_data(b64_string);
+                            self.apply_data_copy_to_data(data);
+                            
+                        }
+                    }
+
+                    const list = document.getElementById('midi-list');
+                    const debugEl = document.getElementById('debug');
+                    var audio = document.getElementById("audio");
+
+                    function connectToDevice(device) {
+                        console.log('Connecting to device', device);
+                        console.log('window.navigator_midi_access_device', device);
+                        window.navigator_midi_access_device = device;
+                        window.navigator_midi_output = null; 
+                        navigator_midi_access.outputs.forEach(
+                            function(asdf){
+                                if(asdf.name == device.name){
+                                    window.navigator_midi_output = asdf; 
+                                }
+                            }
+                        )
+
+                    device.onmidimessage = function(m) {
+                        
+                        const [command, key, velocity] = m.data;
+
+                        var command_keynumber = key; 
+                            var command_keydown = 144; 
+                            var command_keyup = 128;
+                            
+                            var pad = vueObject.get_pad_by_id(key);
+                            var slider = vueObject.get_slider_by_id(key);
+                            console.log(slider)
+                            console.log(command, key, velocity);
+
+                            if(slider){
+                                slider.value_percentage = ((vueObject.akai_apc_mini.slider_max_perc - vueObject.akai_apc_mini.slider_min_perc) / 128 )*velocity;
+                            }
+
+                            var status_byte = vueObject.akai_apc_mini.midi_messages_send.pad.status_byte.light_off; 
+                            var data_byte1 = pad.id; //
+                            var data_byte2 = vueObject.akai_apc_mini.midi_messages_send.pad.data_byte2.green; 
+
+
+                            if(pad){
+                                if (command === command_keydown) {
+                                    pad.keydown = true;
+
+                                    var pad_light_color_index_max = 3;
+                                    pad.light_color_index = (pad.light_color_index+1)%pad_light_color_index_max; 
+                                    
+                                    if(pad.light_color_index == 0){data_byte2 = vueObject.akai_apc_mini.midi_messages_send.pad.data_byte2.green}
+                                    if(pad.light_color_index == 1){data_byte2 = vueObject.akai_apc_mini.midi_messages_send.pad.data_byte2.orange}
+                                    if(pad.light_color_index == 2){data_byte2 = vueObject.akai_apc_mini.midi_messages_send.pad.data_byte2.red}
+                                
+                                    status_byte = vueObject.akai_apc_mini.midi_messages_send.pad.status_byte.light_on;
+
+                                    
+                                    if(pad.buffer){
+                                        // audio.addEventListener("load", () => {
+                                            //     URL.revokeObjectURL(urlObj);
+                                            // });
+                                            // audio.pause();
+                                            // audio.currentTime = 0;
+                                            
+                                            // audio.src = pad.obj_url;
+                                            // audio.play()
+                                            // pad.sound_source.stop()
+                                            //console.log(self.sound_source);
+                                            pad.sound_source = pad.audio_context.createBufferSource();
+                                            pad.sound_source.buffer = pad.buffer;
+                                            // pad.sound_source.disconnect();
+
+                                            pad.sound_source.connect(pad.audio_context.destination);
+                                            // set the value of the pitch here
+                                            console.log(pad.id%self.akai_apc_mini.sliders.length)
+                                            var pitch = (self.akai_apc_mini.sliders[(pad.id%self.akai_apc_mini.sliders.length-2)].value_percentage/100)*1000;// value of pitch
+                                             console.log("pitch")
+                                             console.log(pitch)
+
+                                            pad.sound_source.detune.value = pitch;
+                                            pad.sound_source.start(0);
+                                            //console.log(file);
+                                        }
+                                        
+                                    } else if(command === command_keyup) {
+                                        pad.keydown = false;
+                                        status_byte = vueObject.akai_apc_mini.midi_messages_send.pad.status_byte.light_off;
+                                    }
+
+                                    var midi_message = [status_byte, data_byte1, data_byte2];
+                                    window.navigator_midi_output.send(midi_message);
+                                }
+                    }
+                    }
+
+                    function replaceElements(inputs) {
+                    while(list.firstChild) {
+                        list.removeChild(list.firstChild)
+                    }
+                    const elements = inputs.map(e => {
+                            console.log(e);
+                            const el = document.createElement('li')
+                            el.innerText = `${e.name} (${e.manufacturer})`;
+                            el.addEventListener('click', connectToDevice.bind(null, e));
+                            return el;
+                        });
+
+                        elements.forEach(e => list.appendChild(e));
+                    }
+
+                    navigator.requestMIDIAccess()
+                        .then(function(access) {
+                        console.log('window.navigator_midi_access', access);
+                        navigator_midi_access = access;
+
+                        replaceElements(Array.from(access.inputs.values()));
+                        access.onstatechange = function(e) {
+                            console.log(1);
+                            replaceElements(Array.from(this.inputs.values()));
+                        }
+
+
+
+                        })
+
+
+                },
+                watch: {
+                    "last_clicked_pad": function(last_clicked_pad_newval, last_clicked_pad_oldval){
+                        var self = this;
+                        var input = document.createElement('input');
+                        input.type = 'file';
+                        input.addEventListener("change", handleFiles, false);
+                        function handleFiles() {
+                            var file = this.files[0];
+                            
+                            //console.log(val);
+                            //console.log(file);
+                            var obj_url = URL.createObjectURL(file);
+                            
+                            
+                            // check for file
+                            if(this.files[0] == undefined) {
+                                // Stop the process and tell user they need to upload a file.
+                                return false;
+                            }
+
+                            var reader1 = new FileReader();
+                            reader1.onload = function(ev) {
+
+                                last_clicked_pad_newval.audio_context = new AudioContext()
+                                // Decode audio
+                                last_clicked_pad_newval.audio_context.decodeAudioData(ev.target.result).then(function(buffer) {
+                                    
+                                    
+                                    last_clicked_pad_newval.buffer = buffer; 
+
+
+                                });
+                            };
+                            reader1.readAsArrayBuffer(this.files[0]);
+
+                            last_clicked_pad_newval.file_name = file.name
+                            //last_clicked_pad_newval.obj_url = obj_url;
+                        }
+
+                        input.click(); 
+                        console.log(1);
+                    },
+                    "data": {
+                        handler: function(a,b,c,d){
+                            console.log(a,b,c,d);
+                        },
+                        deep: true, 
+                    }
+                },
+                methods: {
+                    get_slider_by_id: function(id){
+                        var self = this;
+                        var slider = self.akai_apc_mini.sliders.filter(function(asdf){
+                            return asdf.id == id; 
+                        }); 
+                        if(slider.length>0){
+                            return slider[0]
+                        }
+                        return null;
+                    },
+                    get_pad_by_id: function(key){
+                        var pad_group = vueObject.akai_apc_mini.pads_groups.filter(function(asdf){
+                                
+                                var a = asdf.pads.filter(function(asdf2){
+                                    return asdf2.id == key; 
+                                })
+
+                                return a.length > 0
+                            })
+                            if(pad_group.length > 0){
+                                pad_group = pad_group[0];
+                                var pad = pad_group.pads.filter(function(asdf2){
+                                    return asdf2.id == key; 
+                                });
+
+                                // console.log(key);
+                                // console.log(pad);
+
+                                if(pad.length > 0){
+                                    return pad[0]; 
+                                }
+                            }
+                        return null;
+                    },
+                    reset_or_update_history_if_data_change: function(){
+                        var self = this;
+                        
+                        // reset the history if user updated changes 'manually' (without using ctrl+z)
+                        if(!self.undo_redo_used){ 
+                            console.log("reset history");
+                            self.data_history = self.data_history.slice(0, self.data_history_index+1);
+                            self.undo_redo_used = false; 
+                        }
+
+                        if(self.data_change){
+                            
+                            window.setTimeout(function(){
+
+                                self.write_b64_to_history();
+                                self.data_change = false; 
+    
+                            },10);
+                        }
+                    }, 
+                    get_important_data_for_url: function(){
+
+                        let data_copy = Object.assign({}, this._data);
+                        for(var key in this.data_to_b64_ignore_props){
+                            var prop = this.data_to_b64_ignore_props[key];
+                            delete data_copy[prop];
+                        }
+
+                        return data_copy;
+
+                    },
+                    write_b64_to_history: function(){
+                        //for the history we can use full data object , not really working :(
+                        var data = this.get_important_data_for_url();
+                        var b64_string = this.data_to_b64(data);
+                        this.data_history.push(b64_string);
+                        this.data_history_index = parseInt(this.data_history.length -1);
+                        
+                        console.log("write_b64_to_history, history: ");
+                        console.log(this.data_history);
+                    },
+                    write_b64_to_url: function(){
+                        var data = this.get_important_data_for_url();
+                        var b64_string = this.data_to_b64(data);
+                        var parts = window.location.href.split(this.url_b64_separator);
+                        var clear_url = parts.shift();
+                        // !IMPORTANT , while developing and using write_b64_to_url, data will be loaded between site reloads which leads to unexpected behaviuours !!!, don't ever use write_b64_to_url in development
+                        if(!this.development){
+                            window.location.href = clear_url + this.url_b64_separator + this.url_b64_prop + this.url_b64_assignment_character + b64_string;
+                        }
+                    },
+                    read_b64_from_url: function(){
+                        var parts = window.location.href.split(this.url_b64_separator);
+                        var fragment = parts.pop();
+                        var parts = fragment.split(this.url_b64_prop + this.url_b64_assignment_character);
+                        //console.log(parts);
+
+                        if(parts.length == 1){
+                            return false;
+                        }
+                        var b64_string = parts.pop();
+                        var data = this.b64_to_data(b64_string);
+
+                        this.apply_data_copy_to_data(data);
+                    },
+                    data_to_b64: function(data){
+
+                        var data_copy_json = JSON.stringify(data);
+                        
+                        var data_copy_json_b64 = btoa((encodeURIComponent(data_copy_json)));
+
+                        return data_copy_json_b64;
+
+                    },
+                    b64_to_data : function(b64){
+                        var atobed = atob(b64);
+                        var data_json = decodeURIComponent(atobed);
+                        var data = JSON.parse(data_json);
+                        return data; 
+                    },
+                    apply_data_copy_to_data: function(data){
+                        for(var key in data){
+                            this[key] = data[key];
+                        }
+                        return true;
+                    }, 
+                    
+                    "test_method": function(){
+                        console.log("test");
+                    }, 
+                },
+                computed: {
+                    "test_computed": function(){
+                        return "test_computed"
+                    }
+                }
+            })
+        
+    });
+
+
+
+</script>

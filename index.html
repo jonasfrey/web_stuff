@@ -1,0 +1,1643 @@
+
+
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>naturesfractal</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+        <!-- development version, includes helpful console warnings -->
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />
+        <script type="module" src="https://cdn.space.unibe.ch/InputTypeTextButNumber.js"></script>
+       
+       <style>
+
+            *, option{
+                background-color: rgba(37, 37, 37, 0.2);
+                color:rgba(255,255,255,0.7);
+                font-family: Arial, Helvetica, sans-serif;
+                font-size:1rem;
+            }
+            body{
+                max-height: 100vh;
+    max-width: 100vw;
+    width: 100vw;
+    height: 100vh;
+                }
+            *.active{
+                color:rgba(255,255,255,1);
+            }
+
+            button, label {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            input, button, textarea, select, option{
+                width:100%;
+                padding:0.7rem;
+            }
+            .container-fluid{
+                background:transparent;
+            }
+
+            label{
+                position:relative;
+                color:rgba(255,255,255,0.8);
+                top:0.43rem;   
+                    padding-right:0.6rem;
+                    padding-left:0.6rem;
+                background:rgba(255,255,255,0.2);
+                padding-top:0.3rem;
+                padding-bottom:0.3rem;
+
+                border-radius: 3px;
+            }
+            input, button, select, textarea {
+                border: 1px solid rgba(255,255,255,0.5);
+                border-radius: 3px;
+                padding:0.4rem 0.6rem;
+            }
+
+            input:hover, button:hover, input:focus, button:focus, *.active{
+                border: 1px solid rgba(255,255,255,1);
+                outline:none;
+                box-shadow:0 0 10px rgba(255,255,255,1) inset;
+                color:rgba(255,255,255,1);
+
+                animation-duration: 3s;
+                animation-name: active_border_radius_change;
+                animation-iteration-count: infinite;
+                animation-direction: alternate;
+            }
+
+            .recording{
+                animation-duration: 1s !important;
+                animation-name: recording !important;
+                animation-iteration-count: infinite !important;
+                animation-direction: alternate !important;   
+            }
+
+
+            @keyframes active_border_radius_change {
+                from {
+                    border-radius: 0px;
+                    box-shadow:0 0 2px rgba(255,255,255,1) inset;
+
+                }
+
+                to {
+                    border-radius: 3px;
+                    box-shadow:0 0 8px rgba(255,255,255,1) inset;
+                    
+                }
+            }
+
+            @keyframes recording {
+                from {
+                    background-color:rgba(255,0,0,0);
+                }
+
+                to {
+                    background-color:rgba(255,0,0,0.9);
+                    
+                }
+            }
+
+
+
+
+            div#element_inserted-by-ToolTip-js {
+                background: rgba(0,0,0,0.8) !important;
+                color: #eee;
+                border: 1px solid rgba(255,255,255,0.8) !important;
+            }
+
+
+            .recorded_video_overlay {
+                position: fixed;
+                z-index: 1;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: rgba(0,0,0,0.55);
+                overflow: hidden;
+            }
+
+            .recorded_video_overlay video {
+                width: 100%;
+                max-width: 90%;
+            }
+
+            .custom_context_menu {
+                position: fixed;
+                background: rgba(0,0,0,1);
+                border: 0.1rem solid white;
+                padding: 1rem;
+                z-index: 11;
+                box-shadow: 0 2px 5px 1px rgb(0 0 0 / 16%);
+            }
+            .custom_context_menu button{
+                display:flex;
+                justify-content: space-between;
+            }
+            .custom_context_menu span{
+                padding:0 0.5rem;
+            }
+
+            
+        </style>
+        
+        <!-- <script type="module" src="./index.js"></script> -->
+        <script type="module">
+
+        import {ToolTipp} from "https://cdn.space.unibe.ch/ToolTipp.js";
+
+
+        var tt = new ToolTipp();
+
+
+
+        import {JsonToHtml} from "https://cdn.space.unibe.ch/JsonToHtml.js";
+        document.getElementById("app").append(
+        jth.parse(
+            {
+                class:"container-fluid",
+                "v-on:contextmenu": "on_custom_context_menu('container_fluid')",
+                c: [
+                    {
+                        "v-if": "custom_context_menus.container_fluid.bool", 
+                        "class": "custom_context_menu", 
+                        ":style": "'top:'+custom_context_menus.container_fluid.y+'px;left:'+custom_context_menus.container_fluid.x+'px;'",
+                        "c": [
+
+                            {
+                                "c": [
+                                    {
+                                        "t": "input", 
+                                        "style": "width:25%",
+                                        ":class": "(paste_operator == '+') ? 'active' : ''",
+                                        "v-on:click": "paste_operator = '+'",
+                                        "type": "button", 
+                                        "c": "+", 
+                                        "value": "+"
+                                    },
+
+                                    {
+                                        "t": "input", 
+                                        "style": "width:25%",
+                                        ":class": "(paste_operator == '-') ? 'active' : ''",
+                                        "v-on:click": "paste_operator = '-'",
+                                        "type": "button", 
+                                        "c": "-", 
+                                        "value": "-"
+                                    },
+                                    {
+                                        "t": "input", 
+                                        "style": "width:25%",
+                                        ":class": "(paste_operator == '*') ? 'active' : ''",
+                                        "v-on:click": "paste_operator = '*'",
+                                        "type": "button", 
+                                        "c": "*", 
+                                        "value": "*"
+                                    },
+                                    {
+                                        "t": "input", 
+                                        "style": "width:25%",
+                                        ":class": "(paste_operator == '/') ? 'active' : ''",
+                                        "v-on:click": "paste_operator = '/'",
+                                        "type": "button", 
+                                        "c": "/", 
+                                        "value": "/"
+                                    }
+                                ]
+                            },
+                            {
+                                "t": "button",
+                                "v-on:click": "paste_content('Math.sin(t)');custom_context_menus.container_fluid.bool = false",
+                                "c": [
+                                    {   
+                                        "t":"span", 
+                                        "c": "paste SIN :"
+                                    },
+                                    {
+                                        "t":"span",
+                                        "style": "font-family:monospace",
+                                        "c": "Math.sin(t)"
+                                    }
+                                ]
+                            },
+                            {
+                                "t": "button",
+                                "v-on:click": "paste_content('Math.cos(t)');custom_context_menus.container_fluid.bool = false",
+                                "c": [
+                                    {
+                                        "t":"span", 
+                                        "c": "paste COS :"
+                                    },
+                                    {
+                                        "t":"span",
+                                        "style": "font-family:monospace",
+                                        "c": "Math.cos(t)"
+                                    }
+                                ]
+                            },
+                            {
+                                "t": "button",
+                                "v-on:click": "paste_content('Math.random()');custom_context_menus.container_fluid.bool = false",
+                                "c": [
+                                    {
+                                        "t":"span", 
+                                        "c": "paste RANDOM :"
+                                    },
+                                    {
+                                        "t":"span",
+                                        "style": "font-family:monospace",
+                                        "c": "Math.random()"
+                                    }
+                                ]
+                            },
+                        ]
+                    },
+                    {
+                        "v-if": "recording_canvas_finished",
+                        class:"recorded_video_overlay", 
+                        c: [
+                            {
+                                "t": "button",
+                                "class": "fas fa-times",
+                                "v-on:click": "recording_canvas_finished = false"
+                            }, 
+                            {
+                                "c": "you've just recorded this video, you can download or just dismiss it"
+                            },
+                            {
+                                "t": "video", 
+                                ":src": "recording_canvas_src", 
+                                "controls": "true"
+                            }
+                        ]
+                    },
+                    {
+                        t: "div", 
+                        class:"row",
+
+                        c: [
+                            {   
+                                class:"col-6",
+                                c:[
+                                    {
+                                        t: "input",
+                                        type: "file", 
+                                        id:"input_type_file"
+                                        //"v-model": "audio_file.input_type_file"
+                                    }
+                                ]
+                            },
+                            {   
+                                class:"col-6",
+                                c:[
+                                    {
+                                        t: "audio",
+                                        id:"audio",
+                                        controls: "true", 
+                                        c:[
+                                            {
+                                                t:"source", 
+                                                //":src":"audio_file.src", 
+                                                //":type":"audio_file.type"
+                                            }
+                                        ] 
+
+                                    }
+                                ]
+                            },
+
+                            {   
+                                class:"col-3",
+                                c:[
+                                    {
+                                        t: "button", 
+                                        c: "toggle inputs", 
+                                        "v-on:click": "input_gui ? input_gui = false : input_gui = true"
+                                    }
+                                ]
+                            },
+                            {
+                                class:"col-6 row",
+                                c:[
+                                    {
+                                        "class": "col-2",
+                                        "t": "label", 
+                                        "c": "render_id"
+                                    },
+                                    {
+                                        t: "button", 
+                                        "class": "col-2",
+                                        c: [
+                                            {
+                                                "v-if": "animation.running",
+                                                "class": "fas fa-stop"
+                                            },
+                                            {
+                                                "v-if": "!animation.running",
+                                                "class": "fas fa-play"
+                                            },
+                                        ],
+                                        "v-on:click": "(animation.running) ? animation_stop() : animation_start()"
+                                    },
+                                    {
+                                        t: "button",
+                                        "class": "col-2",
+                                        c: [
+                                            {
+                                            "class": "fas fa-undo-alt"
+                                            }
+                                        ],
+                                        "v-on:click": "animation_reset_render_id()"
+                                    },
+                                    {
+                                        t: "button",
+                                        "class": "col-2",
+                                        ":class": "(animation.render_direction_forward) ? 'active': ''",
+                                        c: [
+                                            {
+                                                "class": "fas fa-forward"
+                                            }
+                                        ],
+                                        "v-on:click": "animation.render_direction_forward = true"
+                                    },
+                                    {
+                                        t: "button",
+                                        "class": "col-2",
+                                        ":class": "(animation.render_direction_forward) ? '': 'active'",
+                                        c: [
+                                            {
+                                            "class": "fas fa-backward"
+                                            }
+                                        ],
+                                        "v-on:click": "animation.render_direction_forward = false"
+                                    },
+                                    {
+                                        
+                                        "class": "col-2",
+                                        c:[
+                                            {
+                                                t: "button",
+                                                ":class": "(recording_canvas) ? 'active recording': ''",
+                                                c: [
+                                                    {
+                                                    "class": "fas fa-video"
+                                                    },
+                                                ],
+                                                 "v-on:click": "record_canvas()"
+                                            },
+                                            {
+                                                //temporary disabled since worker is not really usefull
+                                                "v-if": "false",
+                                                c: [
+                                                    {
+                                                        t: "label", "for": "recording_t_limit", "c": "t"
+                                                    },
+                                                    {
+                                                        t: 'input', "id": "recording_t_limit",  "v-model": "recording_t_limit", "type":  "number",
+                                                    },
+                                                ]
+                                            }
+                                        ]
+
+                                    },
+
+                                ]
+                            },
+                            {
+                                class:"col-3",
+                                c:[
+                                    {
+                                        t: "button", 
+                                        c: [
+                                            {
+                                            "class": "fas fa-share-alt"
+                                            },
+                                            {
+                                                c: "share url"
+                                            }
+                                        ],
+                                        "v-on:click": "share_url",
+                                        "data-tooltipp": "click and copy the url to share your work"
+                                    }
+                                ]
+                            },
+                            {
+                            class:"col-12",
+                                c:[
+                                    {
+                                        c: "x:{{device_orientation.alpha}} y: {{device_orientation.beta}} z: {{device_orientation.gamma}}",
+                                    }, 
+                                    {
+                                        t: "span",
+                                        id:"fps",
+                                        c: "",
+                                        "data-tooltipp": "frames per second"
+                                    },
+                                    {
+                                        t: "span",
+                                        id:"delta_ms",
+                                        c: "",
+                                        "data-tooltipp": "milliseconds needed to render the last frame"
+                                    },
+                                    {
+                                        t: "span",
+                                        id:"frame_id",
+                                        c: "",
+                                        "data-tooltipp": "number of the rendered frame "
+                                    },
+
+                                ]
+                            }
+                            
+                        ],
+                    },
+                    {   
+                        "v-if": "input_gui",
+                        class:"row",
+                        c:[
+                            {
+                                class: "col-12",
+                                c: [
+                                    {
+                                        t: "label", "c": "available variables: t(time), o(current object),  c(current corner), fs(frequencies array of audio)"
+                                    },
+                                    {
+                                        t: "label", "for": "custom_variables", "c": "custom_variables ( var_name = 100; another_var = 50 )"
+                                    },
+                                    {
+                                        t: 'input', "id": "custom_variables",  "v-model": "custom_variables", "type":  "string",
+                                    },
+                                ]
+                            },
+
+                            {
+                                class: "col-6",
+                                c: [
+                                    {
+                                        t: "label", "for": "object_count", "c": "object_count(o)"
+                                    },
+                                    {
+                                        t: 'input', "id": "object_count",  "v-model": "object_count", "type":  "string",
+                                    },
+                                ]
+                            },
+
+                            {
+                                class: "col-6",
+                                c: [
+                                    {
+                                        t: "label", "for": "corner_count", "c": "corner_count(c)", "data-tooltipp": "how many corners a polygon should have"
+                                    },
+                                    {
+                                        t: 'input', "id": "corner_count",  "v-model": "corner_count", "type":  "string",
+                                    },
+                                ]
+                            },
+                            {
+                                class: "col-6",
+                                c: [
+                                    {
+                                        t: "label", "for": "x", "c": "x"
+                                    },
+                                    {
+                                        t: 'input', "id": "x",  "v-model": "x", "type":  "string",
+                                    },
+                                ]
+                            },
+                            {
+                                class: "col-6",
+                                c: [
+                                    {
+                                        t: "label", "for": "y", "c": "y"
+                                    },
+                                    {
+                                        t: 'input', "id": "y",  "v-model": "y", "type":  "string",
+                                    },
+                                ]
+                            },
+
+                            {
+                                class: "col-6",
+                                c: [
+                                    {
+                                        t: "label", "for": "radius", "c": "radius"
+                                    },
+                                    {
+                                        t: 'input', "id": "radius",  "v-model": "radius", "type":  "string",
+                                    },
+                                ]
+                            },
+                            {
+                                class: "col-6",
+                                c: [
+                                    {
+                                        t: "label", "for": "rotation", "c": "rotation"
+                                    },
+                                    {
+                                        t: 'input', "id": "rotation",  "v-model": "rotation", "type":  "string",
+                                    },
+                                ]
+                            },
+
+
+                            {
+                                
+                                class: "col-6",
+                                c: [
+
+                                    {
+                                            t: "label", "for": "stroke_style", "c": "stroke_style (hue 0-360 saturation 0-100 lightness 0-100 alpha 0-1)", 
+                                            class:"col-12"
+                                        },
+                                        {
+                                            t: 'input', "id": "stroke_style",  "v-model": "stroke_style_h", "type":  "string",
+                                            class: "col-3", 
+                                        },
+                                        {
+                                            t: 'input', "id": "stroke_style",  "v-model": "stroke_style_s", "type":  "string",
+                                            class: "col-3", 
+                                        },
+                                        {
+                                            t: 'input', "id": "stroke_style",  "v-model": "stroke_style_l", "type":  "string",
+                                            class: "col-3", 
+                                        },
+                                        {
+                                            t: 'input', "id": "stroke_style",  "v-model": "stroke_style_a", "type":  "string",
+                                            class: "col-3", 
+                                        },
+                                ]
+                            },
+                            {
+                                
+                                class: "col-6",
+                                c: [
+                                    {
+                                        t: "label", "for": "stroke_width", "c": "stroke_width"
+                                    },
+                                    {
+                                        t: 'input', "id": "stroke_width",  "v-model": "stroke_width", "type":  "string",
+                                    },
+                                ],
+                            },
+                            {
+                                
+                                class: "col-6",
+                                c: [
+
+                                    {
+                                            t: "label", "for": "shadow_color", "c": "shadow_color (hue 0-360 saturation 0-100 lightness 0-100 alpha 0-1)", 
+                                            class:"col-12"
+                                        },
+                                        {
+                                            t: 'input', "id": "shadow_color",  "v-model": "shadow_color_h", "type":  "string",
+                                            class: "col-3", 
+                                        },
+                                        {
+                                            t: 'input', "id": "shadow_color",  "v-model": "shadow_color_s", "type":  "string",
+                                            class: "col-3", 
+                                        },
+                                        {
+                                            t: 'input', "id": "shadow_color",  "v-model": "shadow_color_l", "type":  "string",
+                                            class: "col-3", 
+                                        },
+                                        {
+                                            t: 'input', "id": "shadow_color",  "v-model": "shadow_color_a", "type":  "string",
+                                            class: "col-3", 
+                                        },
+                                ]
+                            },
+                            {
+                                
+                                class: "col-6",
+                                c: [
+                                    {
+                                        t: "label", "for": "shadow_blur", "c": "shadow_blur"
+                                    },
+                                    {
+                                        t: 'input', "id": "shadow_blur",  "v-model": "shadow_blur", "type":  "string",
+                                    },
+                                ],
+                            },
+                            {
+                                class: "col-6",
+                                c: [
+                                    {
+                                        t: "label", "for": "shadow_offset_x", "c": "shadow_offset_x"
+                                    },
+                                    {
+                                        t: 'input', "id": "shadow_offset_x",  "v-model": "shadow_offset_x", "type":  "string",
+                                    },
+                                ]
+                            },
+                            {
+                                class: "col-6",
+                                c: [
+                                    {
+                                        t: "label", "for": "shadow_offset_y", "c": "shadow_offset_y"
+                                    },
+                                    {
+                                        t: 'input', "id": "shadow_offset_y",  "v-model": "shadow_offset_y", "type":  "string",
+                                    },
+                                ]
+                            },
+                            {
+                                class: "col-6",
+                                c: [
+                                    {
+                                        t: "label", "for": "line_dash_offset", "c": "line_dash_offset"
+                                    },
+                                    {
+                                        t: 'input', "id": "line_dash_offset",  "v-model": "line_dash_offset", "type":  "string",
+                                    },
+                                ],
+                            },
+                            {
+                                class: "col-6",
+                                c: [
+                                    {
+                                        t: "label", "for": "line_dash_segments", "c": "line_dash_segments"
+                                    },
+                                    {
+                                        t: 'input', "id": "line_dash_segments",  "v-model": "line_dash_segments", "type":  "string",
+                                    },
+                                ],
+                            },
+                            {
+                                class: "col-6",
+                                c: [
+                                    {
+                                        t: "label", "for": "line_cap", "c": "line_cap"
+                                    },
+                                    {
+                                        t: 'select', "id": "line_cap",  "v-model": "line_cap", 
+                                        c: [
+                                            {
+                                                t:"option",
+                                                "value": "butt", 
+                                                "c": "butt"
+                                            },
+                                            {
+                                                t:"option",
+                                                "value": "round", 
+                                                "c": "round", 
+                                            },
+                                            {
+                                                t:"option",
+                                                "value": "square", 
+                                                "c": "square", 
+                                            }
+                                        ]
+                                    },
+                                ]
+                            },
+
+                            {
+                                class: "col-6",
+                                c: [
+                                
+                                        {
+                                            t: "label", "for": "background_color", "c": "background_color (hue 0-360 saturation 0-100 lightness 0-100 alpha 0-1)", 
+                                            class:"col-12"
+                                        },
+                                        {
+                                            t: 'input', "id": "background_color",  "v-model": "background_color_h", "type":  "string",
+                                            class: "col-3", 
+                                        },
+                                        {
+                                            t: 'input', "id": "background_color",  "v-model": "background_color_s", "type":  "string",
+                                            class: "col-3", 
+                                        },
+                                        {
+                                            t: 'input', "id": "background_color",  "v-model": "background_color_l", "type":  "string",
+                                            class: "col-3", 
+                                        },
+                                        {
+                                            t: 'input', "id": "background_color",  "v-model": "background_color_a", "type":  "string",
+                                            class: "col-3", 
+                                        },
+
+                                    
+                                ]
+                            },
+                        ]
+
+                    }
+                ]
+            }
+        )
+    );
+
+
+
+
+        window.vueObject = new Vue({
+            el: '#app',
+            data: {
+            audio_file: {
+                src: "", 
+                type: "",
+                input_type_file: ""
+            },
+            animation: {
+                id: 0, 
+                running: true,
+                render_id: 0,  
+                render_direction_forward: true, 
+            },
+
+            objects: [
+
+            ],
+            device_orientation: {
+
+            },
+            input_gui: true, 
+            gamepad : null, 
+            object_count : '30', 
+            corner_count: '3',
+            radius: 'o*10', 
+            background_color_r: 0, 
+            background_color_g: 0, 
+            background_color_b: 0, 
+            background_color_h: 0, 
+            background_color_s: 0, 
+            background_color_l: 0, 
+            background_color_a: 1, 
+            stroke_style_r: 255, 
+            stroke_style_g: 255, 
+            stroke_style_b: 255, 
+            stroke_style_h: 1, 
+            stroke_style_s: 100, 
+            stroke_style_l: 100, 
+            stroke_style_a: 1, 
+            stroke_width: 1, 
+            line_dash_offset: 0.0, 
+            line_dash_segments: "[]",
+            line_cap: "round", 
+            shadow_color_r: 1, 
+            shadow_color_g: 1, 
+            shadow_color_b: 1, 
+            shadow_color_h: 1, 
+            shadow_color_s: 1, 
+            shadow_color_l: 1, 
+            shadow_color_a: 1,  
+            shadow_blur: 0, 
+            shadow_offset_x : 0, 
+            shadow_offset_y : 0, 
+            x:0, 
+            y: 0,
+            rotation: "Math.PI * 2 / corner_count * c",
+            polygon_mode : true, 
+            recording_canvas: false, 
+            recording_t: 0, 
+            recording_t_limit:0, 
+            recording_canvas_finished: false, 
+            recording_canvas_src: "",
+            custom_variables: "custom_var = 100 ; custom_var_2 = 20",
+            custom_context_menus: {
+                "container_fluid": {
+                    bool: false, 
+                    y: 0, 
+                    x: 0, 
+                }
+            },
+
+            paste_operator: "",
+            },
+            mounted: function(){
+
+
+                var self = this;
+
+                document.addEventListener('mouseup', function(){
+                    
+                    if(document.activeElement.tagName == "INPUT"){
+                        console.log("clicked on an input");
+                        // console.log(document.activeElement);
+                        //window.wtf_last_focused_input_element = document.activeElement.cloneNode( false );
+                        window.last_focused_input_element = document.activeElement;
+                    }
+                })
+
+            },
+            methods : {
+                // https://semisignal.com/tag/ffmpeg-js/
+                convertDataURIToBinary: function(dataURI) {
+                    var base64 = dataURI.replace(/^data[^,]+,/,'');
+                    var raw = window.atob(base64);
+                    var rawLength = raw.length;
+                
+                    var array = new Uint8Array(new ArrayBuffer(rawLength));
+                    for (var i = 0; i < rawLength; i++) {
+                        array[i] = raw.charCodeAt(i);
+                    }
+                    return array;
+                },
+
+                pad_img_name: function(n, width, z) {
+                    z = z || '0';
+                    n = n + '';
+                    return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+                },
+                paste_content: function(){
+
+                    var start_index = window.last_focused_input_element.selectionStart;
+                    var new_val = window.last_focused_input_element.value.substring(0, start_index) + this.paste_operator+"Math.sin(t)" + window.last_focused_input_element.value.substring(start_index);
+                    window.last_focused_input_element.value = new_val;
+                    window.last_focused_input_element.dispatchEvent(new Event('input'));
+
+
+                    //this.last_focused_input_element.value = "test";
+
+                },
+                on_custom_context_menu: function(menu_name){
+                    var e = window.event;
+                    var menu_object = this.custom_context_menus[menu_name];
+                    console.log(e.clientY);
+                    console.log(e.clientX);
+                    e.preventDefault();
+                    menu_object.y = e.clientY;
+                    menu_object.x = e.clientX;
+                    menu_object.bool = true;
+                },
+                record_canvas: function(){
+                    if(!this.animation.recording_canvas){
+                        this.start_recording_canvas();
+                    }else{
+                        this.stop_recording_canvas();
+                    }
+                },
+                start_recording_canvas: function(){
+                    this.animation.recording_canvas = ! this.animation.recording_canvas;
+                    this.recording_canvas = true;
+
+                    if(this.recording_t_limit > 0){
+                        this.recording_t = 0 ; //recorded frames 
+                        this.animation_reset_render_id();
+                    }else{
+
+                        animation.chunks = [];
+                        animation.video_stream = animation.canvas.captureStream(60);
+                        animation.media_recorder = new MediaRecorder(animation.video_stream);
+
+                        animation.media_recorder.ondataavailable = function(e) {
+                            animation.chunks.push(e.data);
+                        };
+
+                        animation.media_recorder.onstop = function(e) {
+                            var blob = new Blob(animation.chunks, { 'type' : 'video/mp4' });
+                            animation.chunks = [];
+                            var videoURL = URL.createObjectURL(blob);
+                            vueObject.recording_canvas_src = videoURL;
+                        };
+                        animation.media_recorder.ondataavailable = function(e) {
+                            animation.chunks.push(e.data);
+                        };
+                        animation.media_recorder.start();
+
+                    }
+
+
+
+                },
+                stop_recording_canvas: function(){
+                    this.recording_canvas = false;
+                  
+                    // finish recording , append src to video 
+
+                    if(this.recording_t_limit > 0){
+                        this.finalize_video();
+                    }else{
+                        animation.media_recorder.stop(); 
+                    }
+
+                    this.recording_canvas_finished = true;
+                },
+                
+                /*
+                temporarly disabled since worker is not really usefull
+                */
+                // finalize_video: function(){
+                //     var start_time = +new Date;
+    
+
+
+                //     let messages = '';
+
+                //     animation.ffmpeg_worker.onmessage = function(e) {
+
+                //         var msg = e.data;
+                //         switch (msg.type) {
+                //             case "stdout":
+                //             case "stderr":
+                //                 messages += msg.data + "\n";
+                //                 break;
+                //             case "exit":
+                //                 console.log("Process exited with code " + msg.data);
+                //                 //worker.terminate();
+                //                 break;
+
+                //             case 'done':
+                //                 const blob = new Blob([msg.data.MEMFS[0].data], {
+                //                     type: "video/mp4"
+                //                 });
+                //                 //done( blob )
+
+                //                 const url = webkitURL.createObjectURL(blob);
+    
+                //                 var end_time = +new Date;
+                //                 vueObject.recording_canvas_src = url;
+
+                //                 //$('status').innerHTML = "Compiled Video in " + (end_time - start_time) + "ms, file size: " + Math.ceil(blob.size / 1024) + "KB";
+                //                 //$('awesome').src = url; //toString converts it to a URL via Object URLs, falling back to DataURL
+                //                 //$('download').style.display = '';
+                //                 //$('download').href = url;
+
+                //             break;
+                //         }
+
+                //         console.log(messages);
+                //     };
+
+                //     // https://trac.ffmpeg.org/wiki/Slideshow
+                //     // https://semisignal.com/tag/ffmpeg-js/
+                //     animation.ffmpeg_worker.postMessage({
+                //         type: 'run',
+                //         TOTAL_MEMORY: 1568435456,
+                //         //arguments: 'ffmpeg -framerate 24 -i img%03d.jpeg output.mp4'.split(' '),
+                //         arguments: [
+                //             "-r",
+                //             "20",
+                //             "-i",
+                //             "img%03d.jpeg",
+                //             "-c:v",
+                //             "libx264",
+                //             "-crf",
+                //             "1",
+                //             "-vf",
+                //             "scale="+animation.canvas.width+":"+animation.canvas.height,
+                //             "-pix_fmt",
+                //             "yuv420p",
+                //             "-vb",
+                //             "20M",
+                //             "out.mp4"
+                //         ]
+                //          ,
+
+                //         //arguments: '-r 60 -i img%03d.jpeg -c:v libx264 -crf 1 -vf -pix_fmt yuv420p -vb 20M out.mp4'.split(' '),
+
+                //         MEMFS: animation.ffmpeg_images
+                //     });
+                    
+                //     // Updated recommented arguments
+                //     /*
+                //             worker.postMessage({
+                //             type: 'run',
+                //             TOTAL_MEMORY: 268435456,
+                //             arguments: [
+                //                 //"-r", opts.state.frameRate.toString(),
+                //                 "-framerate", opts.state.frameRate.toString(),
+                //                 "-frames:v", imgs.length.toString(),
+                //                 "-an", // disable sound
+                //                 "-i", "img%03d.jpeg",
+                //                 "-c:v", "libx264",
+                //                 "-crf", "17", // https://trac.ffmpeg.org/wiki/Encode/H.264
+                //                 "-filter:v",
+                //                 `scale=${w}:${h}`,
+                //                 "-pix_fmt", "yuv420p",
+                //                 "-b:v", "20M",
+                //                 "out.mp4"],
+                //             MEMFS: imgs
+                //         });*/
+
+                //     /*video.compile(false, function(output){
+                //         $('awesome').src = url; //toString converts it to a URL via Object URLs, falling back to DataURL
+                //         $('download').style.display = '';
+                //         $('download').href = url;
+                //     });*/
+                // },
+                load_from_url: function(){
+                    if(this.get_url_get_parameter("b64_json") != null){
+                        var url_data = JSON.parse(atob(this.get_url_get_parameter("b64_json")));
+                        console.log(url_data);
+
+                        for(var i in url_data){
+                            this[i] = url_data[i];
+                        }
+                        
+                        window.animation.id = this.animation.id;
+                        window.animation.running = this.animation.running;
+                        window.animation.render_id = this.animation.render_id;
+                        window.animation.render_direction_forward = this.animation.render_direction_forward;
+
+                        //this._data = url_data;
+                    }
+                },
+                get_url_get_parameter: function(parameterName) {
+                    var result = null,
+                        tmp = [];
+                    location.search
+                        .substr(1)
+                        .split("&")
+                        .forEach(function (item) {
+                        tmp = item.split("=");
+                        if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+                        });
+                    return result;
+                },
+                animation_start(){
+                    window.animation.start()
+                },
+                animation_stop(){
+                    window.animation.stop()
+                },
+                animation_reset_render_id: function(){
+                    window.animation.reset_rendering();
+                },
+                get_axis : function(number){
+                    if(navigator.getGamepads()[0]!= undefined){
+                        return navigator.getGamepads()[0].axes[number]
+                    }else{
+                        return 1
+                    }
+                },
+                gp_x : function(){
+                    return this.get_axis(0) 
+                },
+                gp_y : function(){
+                    return this.get_axis(1) 
+                }, 
+                gp_z : function(){
+                    return this.get_axis(2) 
+                }, 
+                share_url: function(){
+                    
+                    this.animation.id = window.animation.id;
+                    this.animation.render_id = window.animation.render_id;
+                    this.animation.render_direction_forward = window.animation.render_direction_forward;
+                    
+
+                    var base64 = btoa(JSON.stringify(this._data));
+                    prompt("Sharing url:", window.location.origin + window.location.pathname + "?" + "b64_json=" + base64);
+                },
+                handle_device_orientation: function(event){
+                    this.device_orientation.absolute = event.absolute;
+                    this.device_orientation.alpha    = event.alpha;
+                    this.device_orientation.beta     = event.beta;
+                    this.device_orientation.gamma    = event.gamma;
+                    // Do stuff with the new orientation data
+                }, 
+                init_animation: function(){
+
+                }
+            }
+        });
+
+
+
+        // window.addEventListener("gamepadconnected", function(e) {
+        
+        // console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
+        //     e.gamepad.index, e.gamepad.id,
+        //     e.gamepad.buttons.length, e.gamepad.axes.length);
+
+        //     vueObject.gamepad = e.gamepad
+        //     // but attention there is also navigator.getGamepads()[0]
+        // });
+
+
+        window.addEventListener("deviceorientation", vueObject.handle_device_orientation, true);
+
+        window.animation = {};
+
+        var element_input_type_file = document.getElementById("input_type_file"); 
+        var element_audio = document.getElementById("audio"); 
+        
+        window.audio_stuff = {}
+        window.audio_stuff.data_array = [];
+        window.audio_stuff.analyser_node_ready = false; 
+        element_input_type_file.addEventListener("change", function(event){
+            var file = event.target.files[0]; // FileList object
+            element_audio.src = URL.createObjectURL(file);
+            const audio_context = new AudioContext();
+
+            //Create audio source
+            //Here, we use an audio file, but this could also be e.g. microphone input
+            // const audioEle = element_audio
+            // audioEle.src = 'my-audio.mp3';//insert file name here
+            // audioEle.autoplay = true;
+            // audioEle.preload = 'auto';
+            const audio_source_node = audio_context.createMediaElementSource(document.getElementById("audio"));
+
+            //Create analyser node
+            const analyser_node = audio_context.createAnalyser();
+            analyser_node.fftSize = 256;
+
+            const buffer_length = analyser_node.frequencyBinCount;
+
+            window.audio_stuff.data_array = new Uint8Array(buffer_length);
+            window.audio_stuff.analyser_node = analyser_node;
+            //window.audio_stuff.analyser_node.getFloatFrequencyData(animation.audio_stuff.data_array);
+
+            window.audio_stuff.analyser_node_ready = true; 
+ 
+            //Set up audio node network
+            audio_source_node.connect(analyser_node);
+
+            analyser_node.connect(audio_context.destination);
+
+        })
+
+
+
+
+        animation.start = function(){
+            animation.start_rendering();
+        }
+
+        //pre- or suffix '..._ts_...' == 'timestamp'
+        //pre- or suffix '..._ms_...' == 'milliseconds'
+
+        animation.running = false;
+        vueObject.animation.running = animation.running;
+
+
+        animation.id = null;
+
+        //animation.render_id and animation.t are the same 
+        //i would keep render_id but mathematically t == time, so i have to have the property t aswell
+        animation.render_id = 0;
+        animation.render_direction_forward = true;
+        animation.t = 0;
+
+        animation.fps = 2;
+        animation.interval_ms = 1000 / animation.fps;
+
+        animation.start_ts_ms = window.performance.now();
+        animation.now_ts_ms = animation.start_ts_ms;
+        animation.then_ts_ms = animation.start_ts_ms;
+        animation.delta_ms = 0;
+        
+        animation.limit_fps = false;
+
+        animation.frames = [];
+        animation.ffmpeg_images = [];
+        //animation.ffmpeg_worker = new Worker('./ffmpeg-worker-mp4.js'); // prod server
+        //animation.ffmpeg_worker = new Worker('file:///home/jf18j492/code/naturesfractal/ffmpeg-worker-mp4.js') // dev locally
+
+
+
+        animation.canvas = document.createElement("canvas");
+        
+
+        animation.gui = {};
+        animation.gui.frame_id = document.getElementById("frame_id");
+        animation.gui.fps = document.getElementById("fps");
+        animation.gui.delta_ms = document.getElementById("delta_ms");
+
+
+        animation.ctx = animation.canvas.getContext("2d");
+
+        document.body.appendChild(animation.canvas);
+
+        animation.window_resize = function(){
+            animation.canvas.width = animation.canvas.parentElement.offsetWidth;
+            animation.canvas.height = animation.canvas.parentElement.offsetHeight;
+            animation.ctx.translate(animation.canvas.width/2, animation.canvas.height/2);
+            animation.ctx.fillStyle = "black";
+            animation.ctx.fillRect(-animation.canvas.width/2, -animation.canvas.height/2, animation.canvas.width*2, animation.canvas.height*2);
+
+
+        }
+        animation.window_resize()
+        
+        window.addEventListener("resize", function(){
+            animation.window_resize();
+        });
+
+
+        // initialize the timer variables and start the animation
+
+        animation.start_rendering = function() {
+            animation.start_ts_ms = window.performance.now();
+            animation.now_ts_ms = animation.start_ts_ms;
+            animation.then_ts_ms = animation.start_ts_ms;
+            this.request_animation_frame();
+            this.running = true;
+            vueObject.animation.running = this.running; 
+        }
+
+
+        animation.stop_rendering = function(){
+            cancelAnimationFrame(this.id)
+            animation.start_ts_ms = window.performance.now();
+            animation.now_ts_ms = animation.start_ts_ms;
+            animation.then_ts_ms = animation.start_ts_ms;
+            this.running = false;
+            vueObject.animation.running = this.running; 
+        }
+
+        //alias
+        animation.stop = function(){
+            animation.stop_rendering();
+        }
+
+        animation.reset_rendering = function(){
+            this.id = 0;
+            this.render_id = 0;
+        }
+
+        // the animation loop calculates time elapsed (delta) since the last loop
+        // and only draws if your specified fps_interval_milliseconds is achieved
+
+        animation.request_animation_frame = function() {
+        
+                // request another frame    
+
+        animation.id = requestAnimationFrame(animation.request_animation_frame);
+
+        animation.now_ts_ms = window.performance.now();
+        animation.delta_ms = animation.now_ts_ms - animation.then_ts_ms;
+
+        // if(animation.delta_ms > 1000){
+        //     alert("wow ! take it easy, the animation has stopped to prevent your browser from crashing, please undo your last input");
+        //     animation.stop();
+        //     return true;
+        // }
+
+        animation.gui.delta_ms.innerText = " delta_ms: " + animation.delta_ms.toFixed(2);
+        animation.fps = 1000 / animation.delta_ms;
+        animation.gui.fps.innerText = " fps: " + animation.fps.toFixed(2);
+
+        
+        // if enough time has elapsed(delta), draw the next frame
+        // if(animation.limit_fps){
+
+
+
+            // temp disabled fps limit
+        //     if ( animation.delta_ms > animation.interval_ms) {
+                
+        //         animation.render();
+                
+        //         animation.then_ts_ms = animation.now_ts_ms;
+
+        //     }
+
+        // }else{
+            animation.render();
+            animation.then_ts_ms = animation.now_ts_ms;
+
+        //}
+
+
+
+
+        }
+
+        /**
+        the actual render function, 
+        this will render the visual content, depending on animation.fps_limit
+        */
+        animation.render = function(){
+
+            //audio_stuff.analyser_node.getFloatFrequencyData(audio_stuff.data_array);
+            if(audio_stuff.analyser_node_ready){
+                audio_stuff.analyser_node.getByteFrequencyData(audio_stuff.data_array);
+            }
+            var f = audio_stuff.data_array;     
+        
+
+            if(vueObject.recording_t_limit > 0 && vueObject.recording_canvas){
+
+                const ffmpeg_img = new Image()
+                , mimeType = 'image/jpeg'
+            
+                const ffmpeg_imgString = animation.canvas.toDataURL(mimeType,1)
+            
+                const ffmpeg_data = vueObject.convertDataURIToBinary( ffmpeg_imgString )
+            
+                animation.ffmpeg_images.push({
+                    name: `img${ vueObject.pad_img_name( animation.ffmpeg_images.length, 3 ) }.jpeg`,
+                    data: ffmpeg_data
+                })
+            
+                ffmpeg_img.src = ffmpeg_imgString
+                document.body.appendChild( ffmpeg_img );
+
+
+                vueObject.recording_t++; //recorded frames 
+                if(vueObject.recording_t >= vueObject.recording_t_limit){
+                    vueObject.stop_recording_canvas();
+                    vueObject.recording_t = 0;
+
+                }
+            }
+
+
+            // if(window.vueObject.gamepad != null){
+            //     console.log(navigator.getGamepads()[0].axes);
+            // }
+            animation.gui.frame_id.innerText = " frame_id: " + animation.render_id;
+
+            if(vueObject.animation.render_direction_forward){
+                animation.render_id++;
+            }else{
+                animation.render_id--;
+            }
+            animation.t = animation.render_id;
+
+            var t = animation.t; 
+
+            var d_o = vueObject.device_orientation;
+
+            var calc_values_object_first = new Function('t','f', `return {
+
+                'background_color_h' : `+vueObject.background_color_h+`,
+                'background_color_s' : `+vueObject.background_color_s+`,
+                'background_color_l' : `+vueObject.background_color_l+`,
+                'background_color_a' : `+vueObject.background_color_a+`,
+                'object_count' : `+vueObject.object_count+`,
+
+            }`)(t, f);
+
+    
+            animation.ctx.shadowColor = "transparent";
+            animation.ctx.shadowBlur = 0;
+            animation.ctx.shadowOffsetX = 0;
+            animation.ctx.shadowOffsetY = 0;
+
+
+            //clear canvas
+            animation.ctx.fillStyle = (
+                "hsla("
+                +(calc_values_object_first.background_color_h)+","
+                +(calc_values_object_first.background_color_s)+"%,"
+                +(calc_values_object_first.background_color_l)+"%,"
+                +(calc_values_object_first.background_color_a)+")"
+            );
+            animation.ctx.fillRect(-animation.canvas.width/2, -animation.canvas.height/2, animation.canvas.width*2, animation.canvas.height*2);
+
+            for(var o = calc_values_object_first.object_count; o > 0; o--){
+
+
+                var new_obj = new Function('o', 'object_count', 't', 'f', `return {
+
+                'corner_count' : `+vueObject.corner_count+`,
+
+                }`)(o, calc_values_object_first.object_count, t, f);
+
+                
+                calc_values_object_first.corner_count = new_obj.corner_count;
+
+                animation.ctx.moveTo(0,0);
+                animation.ctx.beginPath();
+
+                //if (vueObject.corner_count < 3) return;
+
+                var radians_per_corner = ((Math.PI * 2)/calc_values_object_first.corner_count);
+
+                animation.ctx.lineCap = vueObject.line_cap;
+
+                var points = [];
+                var crazy = !vueObject.polygon_mode;
+
+                for (var c = 0; c <= calc_values_object_first.corner_count; c++) {
+                    
+                    var angle = radians_per_corner * c;                     
+
+                    // var args = {
+                    //     'corner_count': vueObject.corner_count,
+                    //     t: t, 
+                    //     o: o, 
+                    //     c: c,
+                    //     //f: f,
+                    //     corner_count: calc_values_object_first.corner_count, 
+                    //     object_count: calc_values_object_first.object_count, 
+                    // };
+                    // var args_names = Object.keys(args).map(function(key, va){return "'"+key+"'"});
+                    // var args_values =  Object.keys(args).map(function(key, va){return args[key] });
+
+
+                    // var custom_variables = vueObject.custom_variables.split(";");
+
+                    // var custom_variables_fun_fun = "new Function(";
+                    // custom_variables_fun_fun += args_names.join(",");
+                    // custom_variables_fun_fun += ",";
+                    // custom_variables_fun_fun += "'return {";
+                    // //--
+                    // for(var key in custom_variables){
+                        
+                    //     var parts = custom_variables[key].split("=");
+                    //     if(parts.join("").trim() == ""){
+                    //         continue;
+                    //     }
+                    //     var prop = parts[0].trim();
+                    //     var val = parts[1].trim();
+                    //     custom_variables_fun_fun += prop+': '+val+',';
+                    // }
+                    // //--
+                    // custom_variables_fun_fun += "}'";
+                    // custom_variables_fun_fun += ")("+args_values.join(",")+");";
+
+                    // var custom_variables_fun_fun_ret = new Function("return "+custom_variables_fun_fun)();
+                    // console.log(custom_variables_fun_fun)
+                    // var custom_variables_evaluated = custom_variables_fun_fun_ret;
+                    // args = Object.assign(args, custom_variables_evaluated);
+                    
+                    // var args_names = Object.keys(args).map(function(key, va){return "'"+key+"'"});
+                    // var args_values =  Object.keys(args).map(function(key, va){return args[key] });
+                    // var fun_fun = "new Function(";
+                    // fun_fun += args_names.join(",");
+                    // fun_fun += ",";
+                    // fun_fun += "'return {";
+                    // //--
+                    // fun_fun += 'corner_count: '+calc_values_object_first.corner_count+',';
+                    // fun_fun += 'radius: '+vueObject.radius+',';
+                    // fun_fun += 'rotation: '+vueObject.rotation+',';
+                    // fun_fun += 'x: '+vueObject.x+',';
+                    // fun_fun += 'y: '+vueObject.y+',';
+                    // fun_fun += 'stroke_width: '+vueObject.stroke_width+',';
+                    // fun_fun += 'line_dash_offset: '+vueObject.line_dash_offset+',';
+                    // fun_fun += 'line_dash_segments: '+vueObject.line_dash_segments+',';
+                    // fun_fun += 'stroke_style_h: '+vueObject.stroke_style_h+',';
+                    // fun_fun += 'stroke_style_s: '+vueObject.stroke_style_s+',';
+                    // fun_fun += 'stroke_style_l: '+vueObject.stroke_style_l+',';
+                    // fun_fun += 'stroke_style_a: '+vueObject.stroke_style_a+',';
+                    // fun_fun += 'shadow_color_h: '+vueObject.shadow_color_h+',';
+                    // fun_fun += 'shadow_color_s: '+vueObject.shadow_color_s+',';
+                    // fun_fun += 'shadow_color_l: '+vueObject.shadow_color_l+',';
+                    // fun_fun += 'shadow_color_a: '+vueObject.shadow_color_a+',';
+                    // fun_fun += 'shadow_blur: '+vueObject.shadow_blur+',';
+                    // fun_fun += 'shadow_offset_x: '+vueObject.shadow_offset_x+',';
+                    // fun_fun += 'shadow_offset_y: '+vueObject.shadow_offset_y+'';
+                    // //--
+                    // fun_fun += "}'";
+                    // fun_fun += ")("+args_values.join(",")+");";
+
+                    // var fun_fun_ret = new Function("return "+fun_fun)();
+                    // var calc_values_object = fun_fun_ret;
+
+                    var calc_values_object = new Function(
+                        't',
+                        'o',
+                        'c',
+                        'angle',
+                        'corner_count',
+                        'object_count',
+                        'f', 
+                        `return {
+
+                            'corner_count' : `+calc_values_object_first.corner_count+`,
+                            'radius' : `+vueObject.radius+`,
+                            'rotation' : `+vueObject.rotation+`,
+                            'x' : `+vueObject.x+`,
+                            'y' : `+vueObject.y+`,
+                            'stroke_width' : `+vueObject.stroke_width+`,
+                            'line_dash_offset' : `+vueObject.line_dash_offset+`,
+                            'line_dash_segments' : `+vueObject.line_dash_segments+`,
+                            'stroke_style_h' : `+vueObject.stroke_style_h+`,
+                            'stroke_style_s' : `+vueObject.stroke_style_s+`,
+                            'stroke_style_l' : `+vueObject.stroke_style_l+`,
+                            'stroke_style_a' : `+vueObject.stroke_style_a+`,
+                            'shadow_color_h' : `+vueObject.shadow_color_h+`,
+                            'shadow_color_s' : `+vueObject.shadow_color_s+`,
+                            'shadow_color_l' : `+vueObject.shadow_color_l+`,
+                            'shadow_color_a' : `+vueObject.shadow_color_a+`,
+                            'shadow_blur' : `+vueObject.shadow_blur+`,
+                            'shadow_offset_x' : `+vueObject.shadow_offset_x+`,
+                            'shadow_offset_y' : `+vueObject.shadow_offset_y+`,
+
+                        }`)(
+                            t,
+                            o,
+                            c,
+                            angle,
+                            calc_values_object_first.corner_count,
+                            calc_values_object_first.object_count,
+                            f
+                        );
+
+                    var real_x = calc_values_object.radius * Math.cos(calc_values_object.rotation) + calc_values_object.x;
+                    var real_y = calc_values_object.radius * Math.sin(calc_values_object.rotation) + calc_values_object.y;
+
+                    animation.ctx.lineDashOffset = calc_values_object.line_dash_offset;
+                    animation.ctx.setLineDash(calc_values_object.line_dash_segments);
+                    animation.ctx.lineWidth = calc_values_object.stroke_width;
+
+                    animation.ctx.shadowColor = 
+                    ("hsla("
+                    +(calc_values_object.shadow_color_h)+","
+                    +(calc_values_object.shadow_color_s)+"%,"
+                    +(calc_values_object.shadow_color_l)+"%,"
+                    +(calc_values_object.shadow_color_a)+")"
+                    );
+                    animation.ctx.shadowBlur = calc_values_object.shadow_blur;
+                    animation.ctx.shadowOffsetX = calc_values_object.shadow_offset_x;
+                    animation.ctx.shadowOffsetY = calc_values_object.shadow_offset_y;
+
+
+                    
+                    var mtp = points[c-1];
+                    points.push([real_x,real_y]);
+                    
+                    if(mtp == undefined){
+                        continue;
+                    }
+
+                    animation.ctx.strokeStyle = 
+                    "hsla("
+                    +(calc_values_object.stroke_style_h)+","
+                    +(calc_values_object.stroke_style_s)+"%,"
+                    +(calc_values_object.stroke_style_l)+"%,"
+                    +(calc_values_object.stroke_style_a)+")";
+
+
+                    animation.ctx.beginPath();
+                    animation.ctx.moveTo(real_x, real_y);
+                    animation.ctx.lineTo(mtp[0],mtp[1]);
+                    animation.ctx.stroke();
+
+                    //mirror x-axis
+                    // animation.ctx.beginPath();
+                    // animation.ctx.moveTo(real_x*(-1), real_y);
+                    // animation.ctx.lineTo(mtp[0],mtp[1]);
+
+                    animation.ctx.stroke();
+
+
+                }
+
+
+                
+            }
+
+
+
+
+
+
+            // Put your drawing code here
+            //console.log("animation.render called");
+
+        }
+
+
+
+        window.animation = new Proxy(window.animation, {
+            set: function (obj, prop, new_val) {
+                
+                if(prop == 'fps'){
+                    obj[prop] = new_val;
+                    obj.interval_ms = 1000 / obj[prop];
+                    return true;
+                }
+
+                // The default behavior to store the value
+                obj[prop] = new_val;
+
+                // Indicate success
+                return true;
+
+            }
+        });
+        vueObject.load_from_url();
+        animation.start()
+        </script>
+
+    </head>
+    <body style="min-height:100vh;margin:0;padding:0;">
+        
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+        <div id="app" style="position:fixed; top:0; z-index: 1;">
+            
+        </div>
+
+        <!-- canvas doesnt need to get re-rendered by vue, it will be appended here-->
+        
+
+        <script src="" async defer></script>
+    </body>
+</html>
+
+
+
