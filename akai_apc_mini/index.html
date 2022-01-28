@@ -907,9 +907,14 @@ ul#midi-list {
                         var self = this;
                         var input = document.createElement('input');
                         input.type = 'file';
+                        input.multiple = true;
                         input.addEventListener("change", handleFiles, false);
                         function handleFiles() {
-                            var file = this.files[0];
+                            for(var i = 0; i < this.files.length; i++){
+                            let file = this.files[i];
+
+                                
+                            let pad = self.get_pad_by_id(i);
                             
                             //console.log(val);
                             //console.log(file);
@@ -917,28 +922,30 @@ ul#midi-list {
                             
                             
                             // check for file
-                            if(this.files[0] == undefined) {
+                            if(file == undefined) {
                                 // Stop the process and tell user they need to upload a file.
                                 return false;
                             }
 
-                            var reader1 = new FileReader();
+                            let reader1 = new FileReader();
                             reader1.onload = function(ev) {
 
-                                last_clicked_pad_newval.audio_context = new AudioContext()
+                                pad.audio_context = new AudioContext()
                                 // Decode audio
-                                last_clicked_pad_newval.audio_context.decodeAudioData(ev.target.result).then(function(buffer) {
+                                pad.audio_context.decodeAudioData(ev.target.result).then(function(buffer) {
                                     
                                     
-                                    last_clicked_pad_newval.buffer = buffer; 
+                                    pad.buffer = buffer; 
 
 
                                 });
                             };
-                            reader1.readAsArrayBuffer(this.files[0]);
+                            reader1.readAsArrayBuffer(file);
 
-                            last_clicked_pad_newval.file_name = file.name
+                            pad.file_name = file.name
                             //last_clicked_pad_newval.obj_url = obj_url;
+                            }
+
                         }
 
                         input.click(); 
