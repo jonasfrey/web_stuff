@@ -10,7 +10,6 @@
 <div id="debug"></div>
 <div id="app">
 
-
 </div>
 
 <style>
@@ -18,14 +17,56 @@
     margin:0;
     padding:0;
 }
+body::-webkit-scrollbar {
+    display: none;
+}
 body{
-    background:#333;
+    background:#0d0c08;
     color:#eee;
     min-width: 100vw;
     min-height: 100vh;
 }
 h1,h2,h3,h4,h5,h6{
     color:#eee !important;
+}
+#midi_debugger {
+    position: absolute;
+    top: 0.6%;
+    left: 19%;
+    border: 1px solid #51ef00;
+    width: 19%;
+    height: 7%;
+    z-index: 10;
+    font-size: 0.8rem;
+    overflow-y: scroll;
+}
+/* width */
+#midi_debugger::-webkit-scrollbar {
+  width: 0.5rem;
+}
+
+/* Track */
+#midi_debugger::-webkit-scrollbar-thumb {
+  background: #33990069;
+}
+/* Track hover*/
+#midi_debugger::-webkit-scrollbar-thumb:hover {
+  background: #339900;
+}
+/* Handle */
+#midi_debugger::-webkit-scrollbar-track {
+  background: #0c2500;
+}
+
+#midi_debugger > div{
+     display: flex; 
+    flex-direction: column;
+}
+#midi_debugger .msg { 
+    color: #51ef00;
+}
+#midi_debugger .ts{
+    color: #297904; 
 }
 #app, .content {
     display: flex;
@@ -44,11 +85,12 @@ canvas{
     z-index: 1;
 }
 .img_container{
-    width: 100vmin;
-    padding-top: 100%;
     position: relative;
     position: relative;
     background: black;
+}
+img{
+    max-height: 100vh;
 }
 .akai_apc_mini{
     position: absolute;
@@ -56,9 +98,6 @@ canvas{
     left: 0;
     height: 100%;
     width: 100%;
-    background-image: url("akai_apc_mini.jpg");
-    /* width:100%; */
-    /* height:auto; */
     background-size: contain;
     background-repeat: no-repeat;
 }
@@ -84,61 +123,90 @@ ul#midi-list {
     width: 9.2%;
     /* height: 100; */
     background: rgba(222,222,222,0.5);
-    margin-right: 1.7%;
+    margin-right: 1.9%;
     /* border: solid red; */
-    padding-top: 3.9%;
+    padding-top: 4.1%;
     margin-bottom: 1.9%;
+    border-radius: 8px;
     position: relative;
 }
 
 .pad_inner{
-    position: absolute; 
-    top: 0; 
-    left: 0; 
-    width:100%; 
-    height: 100%; 
+    position: absolute;
+    top: 0;
+    left: 0;
+    width:100%;
+    height: 100%;
     word-break: break-all;
     font-size: 10px;
     color: black;
-    padding:0.2rem;
+    padding:0.5rem;
+    justify-content: center;
+    align-items: center;
+    /* border-radius: 2px; */
 }
 
 .pads_groups {
-    margin-left: 3.4%;
-    margin-top: 9.3%;
+    margin-left: 1.9%;
+    margin-top: 7.7%;
 }
 .pad.keydown_true{
     background:red !important;
 }
-.sliders {
-    display: flex;
-    flex-direction: row;
-    background: rgba(21,234,211,0.2);
-    position: absolute;
-    left: 4.2%;
-    top: 62%;
-    width: 91.9%;
-    height: 20%;
-    display: flex;
-    justify-content: space-between;
+.faders {
+    background: rgb(234 21 186 / 20%);
 }
 
-.slider {
-    position: relative;
-    width: 8%;
-    height: 100%;
+.fader {
+    position: absolute;
     background: rgba(222,0,0,0.1);
     /* margin-right: 3.4%; */
     z-index: 10;
     border: 1px solid red;
 }
-.slider_inner {
+.fader_inner {
     width: 100%;
     background: red;
     position: absolute;
     bottom: 10%;
     height:10px;
 }
+
+
+.fader_button {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(222,0,0,0.1);
+    z-index: 10;
+    border: 1px solid blue;
+}
+
+
+.scene_button {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(222,0,0,0.1);
+    z-index: 10;
+    border: 1px solid red;
+}
+
+
+.shift_button {
+    position: absolute;
+    border-radius: 5px;
+    background: rgba(222,0,0,0.1);
+    z-index: 10;
+    border: 1px solid pink;
+}
+
+.main_button {
+    position: absolute;
+    border-radius: 10px;
+    background: rgba(70, 230, 49, 0.1);
+    z-index: 10;
+    border: 1px solid yellow;
+}
+
 </style>
 
 <script type="text/javascript">
@@ -151,32 +219,78 @@ ul#midi-list {
                     t:"div",
                     class: "content", 
                     c: [
+
                         {
                             id: "audio", 
                             t: "audio"
                         },
+
                         {
                             t: "div",
                             class: "img_container", 
                             c: [
                                 {
+                                    id: "midi_debugger", 
+                                    c: [
+                                        {
+                                            "v-for": "msg in midi.debugger.msgs", 
+                                            "v-html": "msg"
+                                        }
+                                    ]
+                                },
+                                {
+                                    src:"akai_apc_mini_nobuttons_noborder.png", 
+                                    t:"img"
+                                },
+                                {
                                     "class": "akai_apc_mini",
                                     c:[
+                                        
                                         {
-                                            class: "pads_groups", 
+                                            class: "main_buttons",
                                             c:[
                                                 {
-                                                    "class":"pad_group",
-                                                    "v-for": "padgroup in akai_apc_mini.pads_groups",
+                                                    "class":"main_button",
+                                                    "v-for": "main_button in akai_apc_mini.main_buttons.objects",
+                                                    ":style": "get_button_style(main_button, akai_apc_mini.main_buttons.position)",
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            class: "scene_buttons",
+                                            c:[
+                                                {
+                                                    "class":"scene_button",
+                                                    "v-for": "scene_button in akai_apc_mini.scene_buttons.objects",
+                                                    ":style": "get_button_style(scene_button, akai_apc_mini.scene_buttons.position)",
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            class: "fader_buttons",
+                                            c:[
+                                                {
+                                                    "class":"fader_button",
+                                                    "v-for": "fader_button in akai_apc_mini.fader_buttons.objects",
+                                                    ":style": "get_button_style(fader_button, akai_apc_mini.fader_buttons.position)",
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            class: "faders",
+                                            c:[
+                                                {
+                                                    "class":"fader",
+                                                    ":style": "get_button_style(fader, akai_apc_mini.faders.position)",
+                                                    "v-for": "fader in akai_apc_mini.faders.objects",
                                                     c:[
                                                         {
-                                                            ":class": "`pad keydown_${pad.keydown.toString()}`",
-                                                            "v-for": "pad in padgroup.pads",
-                                                            "v-on:click" : "last_clicked_pad = pad",
+                                                            "class": "fader_inner",
+                                                            ":style": "`bottom:${akai_apc_mini.fader_min_perc+fader.value_percentage}%`",
                                                             c: [
                                                                 {
-                                                                    class: "pad_inner", 
-                                                                    "v-html":"pad.file_name",
+                                                                    class: "fader_inner2", 
+                                                                    "v-html":"fader.value8bit",
                                                                 }
                                                             ]
                                                         }
@@ -184,27 +298,13 @@ ul#midi-list {
                                                 }
                                             ]
                                         },
+
                                         {
-                                            class: "sliders",
-                                            c:[
-                                                {
-                                                    "class":"slider",
-                                                    "v-for": "slider in akai_apc_mini.sliders",
-                                                    c:[
-                                                        {
-                                                            "class": "slider_inner",
-                                                            ":style": "`bottom:${akai_apc_mini.slider_min_perc+slider.value_percentage}%`",
-                                                            c: [
-                                                                {
-                                                                    class: "slider_inner2", 
-                                                                    "v-html":"slider.value8bit",
-                                                                }
-                                                            ]
-                                                        }
-                                                    ]
-                                                }
-                                            ]
-                                        },
+                                            "class":"shift_button",
+                                            "v-for": "shift_button in akai_apc_mini.shift_button.objects",
+                                            ":style": "get_button_style(shift_button, akai_apc_mini.shift_button.position)",
+                                        }
+
 
                                     ]
                                 },   
@@ -237,7 +337,14 @@ ul#midi-list {
                 el: '#app',
                 data: {
                     development: true, 
-                    bool: false, 
+                    bool: false,
+                    midi: {
+                        access: null, 
+                        debugger: {
+                            msg: "",
+                            msgs: [''],
+                        } 
+                    },
                     last_clicked_pad : {},
                     akai_apc_mini: {
                         midi_messages_send:{
@@ -263,427 +370,104 @@ ul#midi-list {
                         },
                         slider_min_perc : 10,
                         slider_max_perc : 85,
-                        sliders:[
-                            {"value_u8_bit": 0, value_percentage : 0, id: 48},
-                            {"value_u8_bit": 0, value_percentage : 0, id: 49},
-                            {"value_u8_bit": 0, value_percentage : 0, id: 50},
-                            {"value_u8_bit": 0, value_percentage : 0, id: 51},
-                            {"value_u8_bit": 0, value_percentage : 0, id: 52},
-                            {"value_u8_bit": 0, value_percentage : 0, id: 53},
-                            {"value_u8_bit": 0, value_percentage : 0, id: 54},
-                            {"value_u8_bit": 0, value_percentage : 0, id: 55},
-                            {"value_u8_bit": 0, value_percentage : 0, id: 56},
-                        ],
-                        pads_groups: [{
-                            "pads": [{
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 0
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 1
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 2
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 3
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 4
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 5
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 6
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 7
-                            }],
-                            "name": "pads_0_7"
-                        }, {
-                            "pads": [{
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 8
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 9
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 10
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 11
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 12
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 13
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 14
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 15
-                            }],
-                            "name": "pads_1_15"
-                        }, {
-                            "pads": [{
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 16
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 17
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 18
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 19
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 20
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 21
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 22
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 23
-                            }],
-                            "name": "pads_2_23"
-                        }, {
-                            "pads": [{
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 24
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 25
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 26
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 27
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 28
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 29
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 30
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 31
-                            }],
-                            "name": "pads_3_31"
-                        }, {
-                            "pads": [{
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 32
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 33
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 34
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 35
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 36
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 37
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 38
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 39
-                            }],
-                            "name": "pads_4_39"
-                        }, {
-                            "pads": [{
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 40
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 41
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 42
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 43
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 44
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 45
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 46
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 47
-                            }],
-                            "name": "pads_5_47"
-                        }, {
-                            "pads": [{
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 48
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 49
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 50
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 51
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 52
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 53
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 54
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 55
-                            }],
-                            "name": "pads_6_55"
-                        }, {
-                            "pads": [{
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 56
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 57
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 58
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 59
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 60
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 61
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 62
-                            }, {
-                                "keydown": false,
-                                "light_color_index":0,
-                                "file_name": "click to select file",
-                                src: "",
-                                "id": 63
-                            }],
-                            "name": "pads_7_63"
-                        }]
-                        
+                        faders: {
+                            position:{
+                                "n_start_id": 48,
+                                "n_start_x_perc": 2.5,
+                                "n_start_y_perc": 74.3,
+                                "n_width_perc": 8.1,
+                                "n_height_perc": 20.8,
+                                "s_direction_axis": "x",
+                                "n_margin_x": 10.85,
+                                "n_margin_y": 0
+                            },
+                            objects: [
+                                {"value_u8_bit": 0, value_percentage : 0, id: 48},
+                                {"value_u8_bit": 0, value_percentage : 0, id: 49},
+                                {"value_u8_bit": 0, value_percentage : 0, id: 50},
+                                {"value_u8_bit": 0, value_percentage : 0, id: 51},
+                                {"value_u8_bit": 0, value_percentage : 0, id: 52},
+                                {"value_u8_bit": 0, value_percentage : 0, id: 53},
+                                {"value_u8_bit": 0, value_percentage : 0, id: 54},
+                                {"value_u8_bit": 0, value_percentage : 0, id: 55},
+                                {"value_u8_bit": 0, value_percentage : 0, id: 56},
+                            ]
+                        },
+                        scene_buttons: {
+                            position:{
+                                "n_start_id": 82,
+                                "n_start_x_perc": 91.7,
+                                "n_start_y_perc": 9.1,
+                                "n_width_perc": 3.88,
+                                "n_height_perc": 3.88,
+                                "s_direction_axis": "x",
+                                "n_margin_x": -0.01,
+                                "n_margin_y": 7.03
+                            },
+                            objects: [
+                                {"keydown": false, "light_color_index" : 0, id: 82 },
+                                {"keydown": false, "light_color_index" : 0, id: 83 },
+                                {"keydown": false, "light_color_index" : 0, id: 84 },
+                                {"keydown": false, "light_color_index" : 0, id: 85 },
+                                {"keydown": false, "light_color_index" : 0, id: 86 },
+                                {"keydown": false, "light_color_index" : 0, id: 87 },
+                                {"keydown": false, "light_color_index" : 0, id: 88 },
+                                {"keydown": false, "light_color_index" : 0, id: 89 },
+                            ]
+                        },
+                        fader_buttons:{
+                            position:{
+                                "n_start_id": 64,
+                                "n_start_x_perc": 4.42,
+                                "n_start_y_perc": 66,
+                                "n_width_perc": 4,
+                                "n_height_perc": 4,
+                                "s_direction_axis": "x",
+                                "n_margin_x": 10.89,
+                                "n_margin_y": -0.03
+                            },
+                            objects:[
+                                {"keydown": false, "light_color_index" : 0, id: 64},
+                                {"keydown": false, "light_color_index" : 0, id: 65},
+                                {"keydown": false, "light_color_index" : 0, id: 66},
+                                {"keydown": false, "light_color_index" : 0, id: 67},
+                                {"keydown": false, "light_color_index" : 0, id: 68},
+                                {"keydown": false, "light_color_index" : 0, id: 69},
+                                {"keydown": false, "light_color_index" : 0, id: 70},
+                                {"keydown": false, "light_color_index" : 0, id: 71},
+                            ]
+                        },
+                        shift_button:{
+                            position:{
+                                "n_start_id": 98,
+                                "n_start_x_perc": 91.4,
+                                "n_start_y_perc": 65.4,
+                                "n_width_perc": 4.4,
+                                "n_height_perc": 4.4,
+                                "s_direction_axis": "x",
+                                "n_margin_x": 0,
+                                "n_margin_y": 0
+                            },
+                            objects:[
+                                {"keydown": false, "light_color_index" : 0, id: 98},
+                            ]
+                        },
+                        main_buttons:{
+                            position:{
+                                "n_start_id": 0,
+                                "n_start_x_perc": 1.9,
+                                "n_start_y_perc": 9.2,
+                                "n_width_perc": 9,
+                                "n_height_perc": 3.9,
+                                "s_direction_axis": "x",
+                                "n_margin_x": 10.9,
+                                "n_margin_y": 0, 
+                                wrap_after: 8, 
+                                n_margin_x_after_wrap: 0,
+                                n_margin_y_after_wrap: 7.02, 
+                            },
+                            objects:[{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":0},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":1},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":2},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":3},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":4},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":5},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":6},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":7},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":8},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":9},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":10},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":11},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":12},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":13},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":14},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":15},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":16},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":17},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":18},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":19},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":20},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":21},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":22},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":23},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":24},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":25},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":26},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":27},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":28},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":29},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":30},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":31},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":32},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":33},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":34},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":35},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":36},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":37},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":38},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":39},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":40},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":41},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":42},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":43},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":44},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":45},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":46},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":47},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":48},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":49},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":50},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":51},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":52},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":53},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":54},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":55},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":56},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":57},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":58},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":59},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":60},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":61},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":62},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":63}]
+                        },
                     },
                     arr: [
                         {
@@ -721,14 +505,16 @@ ul#midi-list {
 
                 },
                 updated: function(){
+                    
+                    //disabled for performance, 29.02.2022
 
-                    console.log("updated");
+                    // console.log("updated");
 
-                    var self = this;
+                    // var self = this;
 
-                    self.data_change = true;
+                    // self.data_change = true;
 
-                    self.write_b64_to_url();
+                    // self.write_b64_to_url();
                                     
                 },
                 mounted: function () {
@@ -804,10 +590,10 @@ ul#midi-list {
                             var command_keydown = 144; 
                             var command_keyup = 128;
                             
-                            var pad = vueObject.get_pad_by_id(key);
-                            var slider = vueObject.get_slider_by_id(key);
                             console.log(slider)
                             console.log(command, key, velocity);
+                            var pad = vueObject.get_object_by_id(key);
+                            var slider = vueObject.get_slider_by_id(key);
 
                             if(slider){
                                 slider.value_percentage = ((vueObject.akai_apc_mini.slider_max_perc - vueObject.akai_apc_mini.slider_min_perc) / 128 )*velocity;
@@ -871,38 +657,72 @@ ul#midi-list {
                     }
 
                     function replaceElements(inputs) {
-                    while(list.firstChild) {
-                        list.removeChild(list.firstChild)
+                        while(list.firstChild) {
+                            list.removeChild(list.firstChild)
+                        }
+                        const elements = inputs.map(e => {
+                                console.log(e);
+                                const el = document.createElement('li')
+                                el.innerText = `${e.name} (${e.manufacturer})`;
+                                el.addEventListener('click', connectToDevice.bind(null, e));
+                                return el;
+                            });
+
+                            elements.forEach(e => list.appendChild(e));
                     }
-                    const elements = inputs.map(e => {
-                            console.log(e);
-                            const el = document.createElement('li')
-                            el.innerText = `${e.name} (${e.manufacturer})`;
-                            el.addEventListener('click', connectToDevice.bind(null, e));
-                            return el;
-                        });
 
-                        elements.forEach(e => list.appendChild(e));
-                    }
 
-                    navigator.requestMIDIAccess()
-                        .then(function(access) {
-                        console.log('window.navigator_midi_access', access);
-                        navigator_midi_access = access;
+                    self.midi.access = null;  // global MIDIAccess object
+                    try {
+                        function on_midi_success( midi_access ) {
+                            // self.midi.debugger.msg = window.performance.now().toString();
+                            self.midi.debugger.msg = "MIDI ready, plug your device";
+                            self.midi.access  = midi_access;
+                            
+                            replaceElements(Array.from(self.midi.access.inputs.values()));
+                            self.midi.access.onstatechange = function(e) {
 
-                        replaceElements(Array.from(access.inputs.values()));
-                        access.onstatechange = function(e) {
-                            console.log(1);
-                            replaceElements(Array.from(this.inputs.values()));
+                                self.midi.debugger.msg = window.performance.now().toString();
+                                self.midi.debugger.msg = "Device was un/plugged";
+                                self.midi.debugger.msg = "Available devices are:";
+                                
+                                self.midi.access.inputs.forEach(a => self.midi.debugger.msg = a.name);
+
+                                replaceElements(Array.from(this.inputs.values()));
+                            }
+                        }
+                        function on_midi_failure(msg) {
+                            self.midi.debugger.msg = ("Failed to get MIDI access - " + msg);
                         }
 
+                        navigator.requestMIDIAccess().then( on_midi_success, on_midi_failure );
+                    } catch (error) {
+                        self.midi.debugger.msg = "your browser is not supported :( , please use chrome !"
+                    }
 
-
-                        })
 
 
                 },
                 watch: {
+                    "midi.debugger.msg":{
+                        deep: true, 
+                        handler: function(new_val, old_val){
+                            console.log('asdf');
+                            var ts = new Date(); 
+                            var s = `${ts.getHours().toString().padStart(2,'0')}:${ts.getMinutes().toString().padStart(2,'0')}:${ts.getSeconds().toString().padStart(2,'0')}`
+                            var o = {
+                                ts : Date.now(), 
+                                msg: `<div class='ts'>${s}:</div> <div class='msg'>${new_val}</div>`
+                            }
+                            
+                            this.midi.debugger.msgs.push(o.msg);
+                            console.log(o.msg);
+                            window.setTimeout(function(){
+                                var el= document.querySelector("#midi_debugger");
+                                el.scrollTop = el.scrollHeight  
+                            },10)
+                        }, 
+                    },
                     "last_clicked_pad": function(last_clicked_pad_newval, last_clicked_pad_oldval){
                         var self = this;
                         var input = document.createElement('input');
@@ -914,7 +734,7 @@ ul#midi-list {
                             let file = this.files[i];
 
                                 
-                            let pad = self.get_pad_by_id(i);
+                            let pad = self.get_object_by_id(i);
                             
                             //console.log(val);
                             //console.log(file);
@@ -959,6 +779,35 @@ ul#midi-list {
                     }
                 },
                 methods: {
+                    get_button_style: function(object, position){
+                        // debugger;
+                        var n_width_perc = (object.n_width_perc) ? object.n_width_perc : position.n_width_perc;
+                        var n_height_perc = (object.n_height_perc) ? object.n_height_perc : position.n_height_perc;
+                        var n_start_x_perc = (object.n_start_x_perc) ? object.n_start_x_perc : position.n_start_x_perc;
+                        var n_start_y_perc = (object.n_start_y_perc) ? object.n_start_y_perc : position.n_start_y_perc;
+                        var n_margin_x = (object.n_margin_x) ? object.n_margin_x : position.n_margin_x;
+                        var n_margin_y = (object.n_margin_y) ? object.n_margin_y : position.n_margin_y;
+                        
+                        var n_nth_obj = Math.abs(position.n_start_id - object.id);
+                        if(position.wrap_after && position.wrap_after != 0){
+                            var n_number_of_wraps = parseInt(n_nth_obj / position.wrap_after)
+                            var calculated_left_perc = position.n_start_x_perc + (n_nth_obj%position.wrap_after) * (n_margin_x) + n_number_of_wraps * position.n_margin_x_after_wrap; 
+                            var calculated_top_perc = position.n_start_y_perc + (n_nth_obj%position.wrap_after) * (n_margin_y) + n_number_of_wraps * position.n_margin_y_after_wrap;
+                        }else{
+                            var calculated_left_perc = position.n_start_x_perc + n_nth_obj * (n_margin_x); 
+                            var calculated_top_perc = position.n_start_y_perc + n_nth_obj * (n_margin_y);
+                        }
+
+                        var n_left_perc = (object.n_left) ? object.n_left : calculated_left_perc;
+                        var n_top_perc = (object.n_top) ? object.n_top : calculated_top_perc;
+                        var style = `
+                            width: ${n_width_perc}%;
+                            padding-top: ${n_height_perc}%;
+                            left: ${n_left_perc}%; 
+                            top: ${n_top_perc}%;
+                        `;
+                        return style.trim();
+                    },
                     get_slider_by_id: function(id){
                         var self = this;
                         var slider = self.akai_apc_mini.sliders.filter(function(asdf){
@@ -969,7 +818,7 @@ ul#midi-list {
                         }
                         return null;
                     },
-                    get_pad_by_id: function(key){
+                    get_object_by_id: function(key){
                         var pad_group = vueObject.akai_apc_mini.pads_groups.filter(function(asdf){
                                 
                                 var a = asdf.pads.filter(function(asdf2){
