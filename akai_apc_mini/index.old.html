@@ -287,17 +287,64 @@ ul#midi-list {
                                     c:[
                                         
                                         {
-                                            "v-for":"name in akai_apc_mini.hardware_objects.names", 
-                                            ":class": "name+'s'", 
+                                            class: "main_buttons",
                                             c:[
                                                 {
-                                                    ":class": "name", 
-                                                    ":id": "hardware_object.id", 
-                                                    "v-for": "hardware_object in get_computed_hardware_objects_by_name(name)",
-                                                    ":style": "get_hardware_object_style(hardware_object, akai_apc_mini.hardware_objects.positions[name])",
+                                                    "class":"main_button",
+                                                    "v-for": "main_button in akai_apc_mini.main_buttons.objects",
+                                                    ":style": "get_button_style(main_button, akai_apc_mini.main_buttons.position)",
                                                 }
                                             ]
                                         },
+                                        {
+                                            class: "scene_buttons",
+                                            c:[
+                                                {
+                                                    "class":"scene_button",
+                                                    "v-for": "scene_button in akai_apc_mini.scene_buttons.objects",
+                                                    ":style": "get_button_style(scene_button, akai_apc_mini.scene_buttons.position)",
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            class: "fader_buttons",
+                                            c:[
+                                                {
+                                                    "class":"fader_button",
+                                                    "v-for": "fader_button in akai_apc_mini.fader_buttons.objects",
+                                                    ":style": "get_button_style(fader_button, akai_apc_mini.fader_buttons.position)",
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            class: "faders",
+                                            c:[
+                                                {
+                                                    "class":"fader",
+                                                    ":style": "get_button_style(fader, akai_apc_mini.faders.position)",
+                                                    "v-for": "fader in akai_apc_mini.faders.objects",
+                                                    c:[
+                                                        {
+                                                            "class": "fader_inner",
+                                                            ":style": "`bottom:${akai_apc_mini.fader_min_perc+fader.value_percentage}%`",
+                                                            c: [
+                                                                {
+                                                                    class: "fader_inner2", 
+                                                                    "v-html":"fader.value8bit",
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+
+                                        {
+                                            "class":"shift_button",
+                                            "v-for": "shift_button in akai_apc_mini.shift_button.objects",
+                                            ":style": "get_button_style(shift_button, akai_apc_mini.shift_button.position)",
+                                        }
+
 
                                     ]
                                 },   
@@ -367,169 +414,112 @@ ul#midi-list {
                             }
                         },
                         hardware_objects: {
-                            types: ["button", "fader", "knob"],
-                            names: [ "main_button", "fader_button", "fader", "scene_button", "shift_button"],
+                            types: ["button", "fader", "knob"], 
                             objects:[
-                                    {"type":"button","name":"main_button","id":0,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":1,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":2,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":3,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":4,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":5,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":6,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":7,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":8,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":9,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":10,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":11,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":12,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":13,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":14,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":15,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":16,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":17,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":18,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":19,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":20,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":21,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":22,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":23,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":24,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":25,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":26,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":27,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":28,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":29,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":30,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":31,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":32,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":33,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":34,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":35,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":36,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":37,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":38,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":39,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":40,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":41,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":42,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":43,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":44,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":45,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":46,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":47,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":48,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":49,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":50,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":51,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":52,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":53,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":54,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":55,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":56,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"fader","name":"fader","id":48,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"fader","name":"fader","id":49,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"fader","name":"fader","id":50,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"fader","name":"fader","id":51,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"fader","name":"fader","id":52,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"fader","name":"fader","id":53,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"fader","name":"fader","id":54,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"fader","name":"fader","id":55,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"fader","name":"fader","id":56,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":57,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":58,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":59,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":60,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":61,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":62,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"main_button","id":63,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"fader_button","id":64,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"fader_button","id":65,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"fader_button","id":66,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"fader_button","id":67,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"fader_button","id":68,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"fader_button","id":69,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"fader_button","id":70,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"fader_button","id":71,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"scene_button","id":82,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"scene_button","id":83,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"scene_button","id":84,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"scene_button","id":85,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"scene_button","id":86,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"scene_button","id":87,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"scene_button","id":88,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"scene_button","id":89,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]},
-                                    {"type":"button","name":"shift_button","id":98,"keydown":false,"midi_in":[0,0,0],"midi_out":[0,0,0]}
-                            ], 
-                            positions: {
-                                fader: {
-                                    
-                                        "n_start_id": 48,
-                                        "n_start_x_perc": 2.5,
-                                        "n_start_y_perc": 74.3,
-                                        "n_width_perc": 8.1,
-                                        "n_height_perc": 20.8,
-                                        "s_direction_axis": "x",
-                                        "n_margin_x": 10.85,
-                                        "n_margin_y": 0
-                                    
-                                },
-                                scene_button: {
-                                    
-                                        "n_start_id": 82,
-                                        "n_start_x_perc": 91.7,
-                                        "n_start_y_perc": 9.1,
-                                        "n_width_perc": 3.88,
-                                        "n_height_perc": 3.88,
-                                        "s_direction_axis": "x",
-                                        "n_margin_x": -0.01,
-                                        "n_margin_y": 7.03
-                                    
-                                },
-                                fader_button:{
-                                    
-                                        "n_start_id": 64,
-                                        "n_start_x_perc": 4.42,
-                                        "n_start_y_perc": 66,
-                                        "n_width_perc": 4,
-                                        "n_height_perc": 4,
-                                        "s_direction_axis": "x",
-                                        "n_margin_x": 10.89,
-                                        "n_margin_y": -0.03
-                                    
-                                },
-                                shift_button:{
-                                    
-                                        "n_start_id": 98,
-                                        "n_start_x_perc": 91.4,
-                                        "n_start_y_perc": 65.4,
-                                        "n_width_perc": 4.4,
-                                        "n_height_perc": 4.4,
-                                        "s_direction_axis": "x",
-                                        "n_margin_x": 0,
-                                        "n_margin_y": 0
-                                    
-                                },
-                                main_button :{
-                                    
-                                        "n_start_id": 0,
-                                        "n_start_x_perc": 1.9,
-                                        "n_start_y_perc": 9.2,
-                                        "n_width_perc": 9,
-                                        "n_height_perc": 3.9,
-                                        "s_direction_axis": "x",
-                                        "n_margin_x": 10.9,
-                                        "n_margin_y": 0, 
-                                        wrap_after: 8, 
-                                        n_margin_x_after_wrap: 0,
-                                        n_margin_y_after_wrap: 7.02, 
-                                    
-                                },
-                            }
+                                { type: "button", name: "main_button", id: 0, keydown: false, midi_in:[0,0,0], midi_out:[0,0,0]},
+                            ]
 
                         },
                         slider_min_perc : 10,
                         slider_max_perc : 85,
+                        faders: {
+                            position:{
+                                "n_start_id": 48,
+                                "n_start_x_perc": 2.5,
+                                "n_start_y_perc": 74.3,
+                                "n_width_perc": 8.1,
+                                "n_height_perc": 20.8,
+                                "s_direction_axis": "x",
+                                "n_margin_x": 10.85,
+                                "n_margin_y": 0
+                            },
+                            objects: [
+                                {"value_u8_bit": 0, value_percentage : 0, id: 48},
+                                {"value_u8_bit": 0, value_percentage : 0, id: 49},
+                                {"value_u8_bit": 0, value_percentage : 0, id: 50},
+                                {"value_u8_bit": 0, value_percentage : 0, id: 51},
+                                {"value_u8_bit": 0, value_percentage : 0, id: 52},
+                                {"value_u8_bit": 0, value_percentage : 0, id: 53},
+                                {"value_u8_bit": 0, value_percentage : 0, id: 54},
+                                {"value_u8_bit": 0, value_percentage : 0, id: 55},
+                                {"value_u8_bit": 0, value_percentage : 0, id: 56},
+                            ]
+                        },
+                        scene_buttons: {
+                            position:{
+                                "n_start_id": 82,
+                                "n_start_x_perc": 91.7,
+                                "n_start_y_perc": 9.1,
+                                "n_width_perc": 3.88,
+                                "n_height_perc": 3.88,
+                                "s_direction_axis": "x",
+                                "n_margin_x": -0.01,
+                                "n_margin_y": 7.03
+                            },
+                            objects: [
+                                {"keydown": false, "light_color_index" : 0, id: 82 },
+                                {"keydown": false, "light_color_index" : 0, id: 83 },
+                                {"keydown": false, "light_color_index" : 0, id: 84 },
+                                {"keydown": false, "light_color_index" : 0, id: 85 },
+                                {"keydown": false, "light_color_index" : 0, id: 86 },
+                                {"keydown": false, "light_color_index" : 0, id: 87 },
+                                {"keydown": false, "light_color_index" : 0, id: 88 },
+                                {"keydown": false, "light_color_index" : 0, id: 89 },
+                            ]
+                        },
+                        fader_buttons:{
+                            position:{
+                                "n_start_id": 64,
+                                "n_start_x_perc": 4.42,
+                                "n_start_y_perc": 66,
+                                "n_width_perc": 4,
+                                "n_height_perc": 4,
+                                "s_direction_axis": "x",
+                                "n_margin_x": 10.89,
+                                "n_margin_y": -0.03
+                            },
+                            objects:[
+                                {"keydown": false, "light_color_index" : 0, id: 64},
+                                {"keydown": false, "light_color_index" : 0, id: 65},
+                                {"keydown": false, "light_color_index" : 0, id: 66},
+                                {"keydown": false, "light_color_index" : 0, id: 67},
+                                {"keydown": false, "light_color_index" : 0, id: 68},
+                                {"keydown": false, "light_color_index" : 0, id: 69},
+                                {"keydown": false, "light_color_index" : 0, id: 70},
+                                {"keydown": false, "light_color_index" : 0, id: 71},
+                            ]
+                        },
+                        shift_button:{
+                            position:{
+                                "n_start_id": 98,
+                                "n_start_x_perc": 91.4,
+                                "n_start_y_perc": 65.4,
+                                "n_width_perc": 4.4,
+                                "n_height_perc": 4.4,
+                                "s_direction_axis": "x",
+                                "n_margin_x": 0,
+                                "n_margin_y": 0
+                            },
+                            objects:[
+                                {"keydown": false, "light_color_index" : 0, id: 98},
+                            ]
+                        },
+                        main_buttons:{
+                            position:{
+                                "n_start_id": 0,
+                                "n_start_x_perc": 1.9,
+                                "n_start_y_perc": 9.2,
+                                "n_width_perc": 9,
+                                "n_height_perc": 3.9,
+                                "s_direction_axis": "x",
+                                "n_margin_x": 10.9,
+                                "n_margin_y": 0, 
+                                wrap_after: 8, 
+                                n_margin_x_after_wrap: 0,
+                                n_margin_y_after_wrap: 7.02, 
+                            },
+                            objects:[{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":0},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":1},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":2},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":3},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":4},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":5},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":6},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":7},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":8},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":9},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":10},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":11},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":12},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":13},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":14},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":15},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":16},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":17},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":18},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":19},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":20},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":21},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":22},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":23},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":24},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":25},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":26},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":27},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":28},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":29},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":30},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":31},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":32},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":33},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":34},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":35},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":36},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":37},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":38},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":39},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":40},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":41},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":42},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":43},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":44},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":45},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":46},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":47},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":48},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":49},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":50},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":51},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":52},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":53},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":54},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":55},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":56},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":57},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":58},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":59},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":60},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":61},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":62},{"keydown":false,"light_color_index":0,"file_name":"click to select file","src":"","id":63}]
+                        },
                     },
                     arr: [
                         {
@@ -740,9 +730,6 @@ ul#midi-list {
                     }
                 },
                 methods: {
-                    get_computed_hardware_objects_by_name: function(name){
-                        return this["computed_"+name+"s"];
-                    },  
                     "update_midi_input_by_id": function(id){
                         var self = this; 
                         // self.midi.inputs.forEach(asdf=> {if(asdf.id == id){self.midi.input = asdf}});
@@ -755,86 +742,85 @@ ul#midi-list {
                     },
                     "onmidimessage" : function(m) {
                         var self = this; 
-                        self.midi.debugger.msg = m.data.toString();
+                        self.midi.debugger.msg = m.toString();
                         
-                        var hardware_object = self.get_object_by_midi_in(m.data);
-                        
-                        console.log(hardware_object);
-                        
-                            // const [command, key, velocity] = m.data;
-                            // var command_keynumber = key; 
-                            // var command_keyup = 128;
-                            // var command_keydown = 144; 
+                        const [command, key, velocity] = m.data;
+
+                        var command_keynumber = key; 
+                            var command_keydown = 144; 
+                            var command_keyup = 128;
                             
-                            // var pad = vueObject.get_object_by_id(key);
-                            // var slider = vueObject.get_slider_by_id(key);
+                            console.log(slider)
+                            console.log(command, key, velocity);
+                            var pad = vueObject.get_object_by_id(key);
+                            var slider = vueObject.get_slider_by_id(key);
 
-                            // if(slider){
-                            //     slider.value_percentage = ((vueObject.akai_apc_mini.slider_max_perc - vueObject.akai_apc_mini.slider_min_perc) / 128 )*velocity;
-                            // }
+                            if(slider){
+                                slider.value_percentage = ((vueObject.akai_apc_mini.slider_max_perc - vueObject.akai_apc_mini.slider_min_perc) / 128 )*velocity;
+                            }
 
-                            // var status_byte = vueObject.akai_apc_mini.midi_messages_send.pad.status_byte.light_off; 
-                            // var data_byte1 = pad.id; //
-                            // var data_byte2 = vueObject.akai_apc_mini.midi_messages_send.pad.data_byte2.green; 
+                            var status_byte = vueObject.akai_apc_mini.midi_messages_send.pad.status_byte.light_off; 
+                            var data_byte1 = pad.id; //
+                            var data_byte2 = vueObject.akai_apc_mini.midi_messages_send.pad.data_byte2.green; 
 
 
-                            // if(pad){
-                            //     if (command === command_keydown) {
-                            //         pad.keydown = true;
+                            if(pad){
+                                if (command === command_keydown) {
+                                    pad.keydown = true;
 
-                            //         var pad_light_color_index_max = 3;
-                            //         pad.light_color_index = (pad.light_color_index+1)%pad_light_color_index_max; 
+                                    var pad_light_color_index_max = 3;
+                                    pad.light_color_index = (pad.light_color_index+1)%pad_light_color_index_max; 
                                     
-                            //         if(pad.light_color_index == 0){data_byte2 = vueObject.akai_apc_mini.midi_messages_send.pad.data_byte2.green}
-                            //         if(pad.light_color_index == 1){data_byte2 = vueObject.akai_apc_mini.midi_messages_send.pad.data_byte2.orange}
-                            //         if(pad.light_color_index == 2){data_byte2 = vueObject.akai_apc_mini.midi_messages_send.pad.data_byte2.red}
+                                    if(pad.light_color_index == 0){data_byte2 = vueObject.akai_apc_mini.midi_messages_send.pad.data_byte2.green}
+                                    if(pad.light_color_index == 1){data_byte2 = vueObject.akai_apc_mini.midi_messages_send.pad.data_byte2.orange}
+                                    if(pad.light_color_index == 2){data_byte2 = vueObject.akai_apc_mini.midi_messages_send.pad.data_byte2.red}
                                 
-                            //         status_byte = vueObject.akai_apc_mini.midi_messages_send.pad.status_byte.light_on;
+                                    status_byte = vueObject.akai_apc_mini.midi_messages_send.pad.status_byte.light_on;
 
                                     
-                            //         if(pad.buffer){
-                            //             // audio.addEventListener("load", () => {
-                            //                 //     URL.revokeObjectURL(urlObj);
-                            //                 // });
-                            //                 // audio.pause();
-                            //                 // audio.currentTime = 0;
+                                    if(pad.buffer){
+                                        // audio.addEventListener("load", () => {
+                                            //     URL.revokeObjectURL(urlObj);
+                                            // });
+                                            // audio.pause();
+                                            // audio.currentTime = 0;
                                             
-                            //                 // audio.src = pad.obj_url;
-                            //                 // audio.play()
-                            //                 // pad.sound_source.stop()
-                            //                 //console.log(self.sound_source);
-                            //                 pad.sound_source = pad.audio_context.createBufferSource();
-                            //                 pad.sound_source.buffer = pad.buffer;
-                            //                 // pad.sound_source.disconnect();
+                                            // audio.src = pad.obj_url;
+                                            // audio.play()
+                                            // pad.sound_source.stop()
+                                            //console.log(self.sound_source);
+                                            pad.sound_source = pad.audio_context.createBufferSource();
+                                            pad.sound_source.buffer = pad.buffer;
+                                            // pad.sound_source.disconnect();
 
-                            //                 pad.sound_source.connect(pad.audio_context.destination);
-                            //                 // set the value of the pitch here
-                            //                 console.log(pad.id%self.akai_apc_mini.sliders.length)
-                            //                 var pitch = (self.akai_apc_mini.sliders[(pad.id%self.akai_apc_mini.sliders.length-2)].value_percentage/100)*1000;// value of pitch
-                            //                  console.log("pitch")
-                            //                  console.log(pitch)
+                                            pad.sound_source.connect(pad.audio_context.destination);
+                                            // set the value of the pitch here
+                                            console.log(pad.id%self.akai_apc_mini.sliders.length)
+                                            var pitch = (self.akai_apc_mini.sliders[(pad.id%self.akai_apc_mini.sliders.length-2)].value_percentage/100)*1000;// value of pitch
+                                             console.log("pitch")
+                                             console.log(pitch)
 
-                            //                 pad.sound_source.detune.value = pitch;
-                            //                 pad.sound_source.start(0);
-                            //                 //console.log(file);
-                            //             }
+                                            pad.sound_source.detune.value = pitch;
+                                            pad.sound_source.start(0);
+                                            //console.log(file);
+                                        }
                                         
-                            //         } else if(command === command_keyup) {
-                            //             pad.keydown = false;
-                            //             status_byte = vueObject.akai_apc_mini.midi_messages_send.pad.status_byte.light_off;
-                            //         }
+                                    } else if(command === command_keyup) {
+                                        pad.keydown = false;
+                                        status_byte = vueObject.akai_apc_mini.midi_messages_send.pad.status_byte.light_off;
+                                    }
 
-                            //         var midi_message = [status_byte, data_byte1, data_byte2];
-                            //         window.navigator_midi_output.send(midi_message);
-                            //     }
-                        },
+                                    var midi_message = [status_byte, data_byte1, data_byte2];
+                                    window.navigator_midi_output.send(midi_message);
+                                }
+                    },
                     update_midi_io: function(){
                         var self = this;
                         self.midi.inputs = Array.from(self.midi.access.inputs.values()); 
                         self.midi.outputs = Array.from(self.midi.access.outputs.values()); 
                     },
-                    get_hardware_object_style: function(object, position){
-                        
+                    get_button_style: function(object, position){
+                        // debugger;
                         var n_width_perc = (object.n_width_perc) ? object.n_width_perc : position.n_width_perc;
                         var n_height_perc = (object.n_height_perc) ? object.n_height_perc : position.n_height_perc;
                         var n_start_x_perc = (object.n_start_x_perc) ? object.n_start_x_perc : position.n_start_x_perc;
@@ -872,39 +858,29 @@ ul#midi-list {
                         }
                         return null;
                     },
-                    get_object_by_midi_in: function(midi_in){
-                        var self = this;
-                        //usually the first or second data byte should be the id of the hardware_object, 
-                        // but in the akai apc mini the faders are
-                        //    [     
-                        //          databyte_1: 176 0b10110000,
-                        //          databyte_2: 48-56('id' number of left to right fader), 
-                        //          databyte_3: 0-127 (fader min to fader max)
-                        //    ]
-                        // akai apc mini has also buttons 
-                        //    [     
-                        //          databyte_1: 128/144 (keyup 0b10000000, keydown 0b10010000),
-                        //          databyte_2: 48-56('id' number of left to right fader), 
-                        //          databyte_3: 0-127 (fader min to fader max)
-                        //    ]
-                        //     
-                        //                          176 =  0b10110000
-                        //                                     ^
-                        // so in databyte_1 the 6. flag is the 'is fader' flag
-                        //                          144 =  0b10110000
-                        //                                      ^
-                        //    in databyte_1 the 5. flag is the 'keydown'
-                        var is_fader = false
-                        
-                        if(midi_in[0] & (1 << (6-1))){
-                            is_fader = true;
-                        }
-                        var hardware_objects = self.akai_apc_mini.hardware_objects.objects.filter(asdf=>asdf.id == midi_in[1]);
-                        if(is_fader){
-                            hardware_objects = hardware_objects.filter(asdf=>asdf.name == 'fader');
-                        }
+                    get_object_by_id: function(key){
+                        var pad_group = vueObject.akai_apc_mini.pads_groups.filter(function(asdf){
+                                
+                                var a = asdf.pads.filter(function(asdf2){
+                                    return asdf2.id == key; 
+                                })
 
-                        return hardware_objects[0];
+                                return a.length > 0
+                            })
+                            if(pad_group.length > 0){
+                                pad_group = pad_group[0];
+                                var pad = pad_group.pads.filter(function(asdf2){
+                                    return asdf2.id == key; 
+                                });
+
+                                // console.log(key);
+                                // console.log(pad);
+
+                                if(pad.length > 0){
+                                    return pad[0]; 
+                                }
+                            }
+                        return null;
                     },
                     reset_or_update_history_if_data_change: function(){
                         var self = this;
@@ -1001,12 +977,7 @@ ul#midi-list {
                 computed: {
                     "test_computed": function(){
                         return "test_computed"
-                    },
-                    "computed_main_buttons": function(){ return this.akai_apc_mini.hardware_objects.objects.filter(o=>o.name == "main_button")},
-                    "computed_faders": function(){ return this.akai_apc_mini.hardware_objects.objects.filter(o=>o.name == "fader")},
-                    "computed_fader_buttons": function(){ return this.akai_apc_mini.hardware_objects.objects.filter(o=>o.name == "fader_button")},
-                    "computed_scene_buttons": function(){ return this.akai_apc_mini.hardware_objects.objects.filter(o=>o.name == "scene_button")},
-                    "computed_shift_buttons": function(){ return this.akai_apc_mini.hardware_objects.objects.filter(o=>o.name == "shift_button")},
+                    }
                 }
             })
         
